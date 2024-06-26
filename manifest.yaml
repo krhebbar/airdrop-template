@@ -1,0 +1,32 @@
+version: "2"
+
+name: ADaaS Template
+description: A template repository for creating Airdrop Snap-ins
+
+service_account:
+  display_name: Airdrop Template Bot
+
+functions:
+  - name: extraction
+    description: Extraction function for the template snap-in
+
+keyring_types:
+  - id: example-connection
+    name: Example Connection
+    description: Example Connection
+    kind: "Secret"
+    is_subdomain: true
+    secret_config:
+      secret_transform: '.token' # a JQ query
+      fields:
+        - id: token
+          name: Token
+          description: Example API token
+
+imports:
+  - slug: template-extractor
+    display_name: Template extractor
+    description: Example template extractor
+    extractor_function: extraction
+    allowed_connection_types:
+      - example-connection
