@@ -9,9 +9,39 @@
           {
             "devrev_leaf_type": "issue",
             "forward": true,
-            "reverse": false,
+            "reverse": true,
             "shard": {
-              "constructed_custom_fields": {},
+              "constructed_custom_fields": {
+                "ext_object_type": {
+                  "field_descriptor": {
+                    "allowed_values": ["Issues"],
+                    "db_name": "ext_object_type",
+                    "default_value": "Issues",
+                    "description": "The source object type/subtype that the item was created from.",
+                    "field_type": "enum",
+                    "is_filterable": true,
+                    "is_required": true,
+                    "name": "ext_object_type",
+                    "ui": {
+                      "display_name": "External Object Type",
+                      "is_hidden_during_create": true,
+                      "is_read_only": true
+                    }
+                  },
+                  "transformation_method": {
+                    "can_apply_to_null": false,
+                    "custom_field_type": {
+                      "allowed_values": ["Issues"],
+                      "db_name": "dummy name",
+                      "field_type": "enum",
+                      "name": "dummy name"
+                    },
+                    "forward_jq": "\"Issues\"",
+                    "transformation_method": "use_raw_jq",
+                    "use_primary_input": false
+                  }
+                }
+              },
               "devrev_leaf_type": {
                 "object_type": "issue"
               },
@@ -31,15 +61,15 @@
                 "body": {
                   "forward": true,
                   "primary_external_field": "body",
-                  "reverse": false,
+                  "reverse": true,
                   "transformation_method": {
-                    "transformation_method": "use_rich_text"
+                    "transformation_method": "use_directly"
                   }
                 },
                 "created_by_id": {
                   "forward": true,
                   "primary_external_field": "creator",
-                  "reverse": false,
+                  "reverse": true,
                   "transformation_method": {
                     "transformation_method": "use_directly"
                   }
@@ -47,7 +77,7 @@
                 "owned_by_ids": {
                   "forward": true,
                   "primary_external_field": "owner",
-                  "reverse": false,
+                  "reverse": true,
                   "transformation_method": {
                     "transformation_method": "use_as_array_value"
                   }
@@ -56,7 +86,7 @@
                   "forward": true,
                   "reverse": false,
                   "transformation_method": {
-                    "enum": "P0",
+                    "enum": "P1",
                     "transformation_method": "use_fixed_value",
                     "value": "enum_value"
                   }
@@ -65,7 +95,7 @@
                   "forward": true,
                   "reverse": false,
                   "transformation_method": {
-                    "enum": "triage",
+                    "enum": "in_development",
                     "transformation_method": "use_fixed_value",
                     "value": "enum_value"
                   }
@@ -73,7 +103,7 @@
                 "title": {
                   "forward": true,
                   "primary_external_field": "title",
-                  "reverse": false,
+                  "reverse": true,
                   "transformation_method": {
                     "transformation_method": "use_directly"
                   }
@@ -105,31 +135,6 @@
                   "reverse": false,
                   "transformation_method": {
                     "transformation_method": "use_directly"
-                  }
-                },
-                "email": {
-                  "forward": true,
-                  "primary_external_field": "email",
-                  "reverse": false,
-                  "transformation_method": {
-                    "transformation_method": "use_directly"
-                  }
-                },
-                "full_name": {
-                  "forward": true,
-                  "primary_external_field": "name",
-                  "reverse": false,
-                  "transformation_method": {
-                    "transformation_method": "use_directly"
-                  }
-                },
-                "state": {
-                  "forward": true,
-                  "reverse": false,
-                  "transformation_method": {
-                    "enum": "SHADOW",
-                    "transformation_method": "use_fixed_value",
-                    "value": "enum_value"
                   }
                 }
               }
