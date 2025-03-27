@@ -47,16 +47,16 @@ const users = [
 
 const attachments = [
   {
-    url: 'https://app.dev.devrev-eng.ai/favicon.ico',
+    url: 'https://app.devrev.ai/favicon.ico',
     id: 'attachment-1',
-    file_name: 'dummy.jpg',
+    file_name: 'favicon1.ico',
     author_id: 'user-1',
     parent_id: 'issue-1',
   },
   {
-    url: 'https://app.dev.devrev-eng.ai/favicon.ico',
+    url: 'https://app.devrev.ai/favicon.ico',
     id: 'attachment-2',
-    file_name: 'dummy.ico',
+    file_name: 'favicon2.ico',
     author_id: 'user-2',
     parent_id: 'issue-2',
   },
@@ -94,7 +94,6 @@ processTask({
     }
   },
   onTimeout: async ({ adapter }) => {
-    await adapter.postState();
     await adapter.emit(ExtractorEventType.ExtractionDataProgress, {
       progress: 50,
     });

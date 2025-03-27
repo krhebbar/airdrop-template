@@ -16,6 +16,9 @@ const getAttachmentStream = async ({
   try {
     const fileStreamResponse = await axiosClient.get(url, {
       responseType: 'stream',
+      headers: {
+        'Accept-Encoding': 'identity',
+      },
     });
 
     return { httpStream: fileStreamResponse };
