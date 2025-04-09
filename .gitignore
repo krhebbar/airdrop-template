@@ -1,13 +1,13 @@
-# IDE-specific configs
-/.vscode/*
-.code-workspace
-/.idea/*
+# System files
+.DS_Store
 
-# Allow run configurations / launch files
-!/.idea/runConfigurations
-!/.vscode/launch.json
-!/.vscode/extensions.json
-
-build.tar.gz
-nohup.out
+# Environment variables
 .env
+
+# Snap-in-specific files
+**/build.tar.gz
+**/extracted_files
+
+# Node.js cache
+**/node_modules
+**/dist
