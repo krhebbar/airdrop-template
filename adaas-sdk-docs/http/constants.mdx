@@ -1,0 +1,43 @@
+---
+title: 'HTTP Constants'
+description: 'Documentation for the constants used in the HTTP module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# HTTP Constants
+
+This page documents the constants used in the HTTP module, primarily for handling rate limiting.
+
+## Grounding
+
+- **Source File:** `src/http/constants.ts`
+
+---
+
+## Rate Limit Constants
+
+These constants are used to identify and handle rate limit errors.
+
+<TypeTable
+  type={{
+    'RATE_LIMIT_EXCEEDED': {
+      type: 'string',
+      description: 'A string constant indicating that the rate limit has been exceeded.',
+      default: 'LIMIT_EXCEEDED',
+    },
+    'LAMBDA_LIMIT_EXCEEDED': {
+      type: 'string',
+      description: 'A string constant indicating that the Lambda limit has been exceeded.',
+      default: 'LAMBDA_LIMIT_EXCEEDED',
+    },
+    'RATE_LIMIT_EXCEEDED_STATUS_CODE': {
+      type: 'number',
+      description: 'The HTTP status code returned when the rate limit is exceeded.',
+      default: '429',
+    },
+  }}
+/>

@@ -1,0 +1,83 @@
+---
+title: 'Uploader Class'
+description: 'Documentation for the Uploader class in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Uploader Class
+
+The `Uploader` class provides a high-level interface for uploading data to the DevRev platform as artifacts. It handles file compression, obtaining upload URLs, uploading the data, and confirming the upload.
+
+## Grounding
+
+- **Source File:** `src/uploader/uploader.ts`
+
+## Constructor
+
+The constructor initializes a new `Uploader` instance.
+
+### Signature
+
+```typescript
+constructor({ event, options }: UploaderFactoryInterface)
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    '{...}': {
+      type: 'UploaderFactoryInterface',
+      description: 'The factory object for creating the uploader.',
+    },
+  }}
+/>
+
+## Core Method
+
+### `upload`
+
+Compresses an array of objects into a gzipped JSONL file and uploads it to the DevRev platform.
+
+#### Signature
+
+```typescript
+async upload(
+  itemType: string,
+  fetchedObjects: object[] | object
+): Promise<UploadResponse>
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    itemType: {
+      type: 'string',
+      description: 'The type of item being uploaded (e.g., "works", "accounts").',
+    },
+    fetchedObjects: {
+      type: 'object[] | object',
+      description: 'The data to be uploaded.',
+    },
+  }}
+/>
+
+#### Returns
+
+A `Promise` that resolves with an `UploadResponse` object, containing either the artifact details or an error.
+
+## Utility Methods
+
+The `Uploader` class also exposes several public methods that are used internally by the `upload` method but can also be used for more granular control over the upload process.
+
+- **`getArtifactUploadUrl`**: Retrieves a pre-signed URL for uploading an artifact.
+- **`uploadArtifact`**: Uploads a file buffer to a pre-signed URL.
+- **`streamArtifact`**: Streams a file to a pre-signed URL.
+- **`confirmArtifactUpload`**: Confirms that an artifact has been successfully uploaded.
+- **`getAttachmentsFromArtifactId`**: Downloads an artifact and parses it as a list of attachments.
+- **`getJsonObjectByArtifactId`**: Downloads an artifact and parses it as a JSON object.

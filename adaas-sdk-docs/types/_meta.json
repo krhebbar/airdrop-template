@@ -1,0 +1,10 @@
+{
+  "title": "Types",
+  "pages": [
+    "index",
+    "common",
+    "extraction",
+    "loading",
+    "workers"
+  ]
+}

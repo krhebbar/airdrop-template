@@ -1,0 +1,10 @@
+{
+  "title": "Workers",
+  "pages": [
+    "spawn",
+    "worker-adapter",
+    "create-worker",
+    "process-task",
+    "worker-js"
+  ]
+}

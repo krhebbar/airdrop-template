@@ -1,0 +1,108 @@
+---
+title: 'Logger Interfaces & Enums'
+description: 'Documentation for interfaces and enums in the Logger module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Logger Interfaces & Enums
+
+This page documents the interfaces and enums used in the `Logger` module.
+
+## Grounding
+
+- **Source File:** `src/logger/logger.interfaces.ts`
+
+---
+
+## `LoggerFactoryInterface`
+
+An interface for creating a `Logger` instance.
+
+<TypeTable
+  type={{
+    event: {
+      type: 'AirdropEvent',
+      description: 'The Airdrop event that provides context for the logs.',
+    },
+    options: {
+      type: 'WorkerAdapterOptions',
+      description: 'Optional configuration for the worker adapter.',
+      default: 'undefined',
+    },
+  }}
+/>
+
+---
+
+## `LogLevel`
+
+An enum that defines the available log levels.
+
+<TypeTable
+  type={{
+    INFO: {
+      type: 'string',
+      description: 'Informational log level.',
+      default: 'info',
+    },
+    WARN: {
+      type: 'string',
+      description: 'Warning log level.',
+      default: 'warn',
+    },
+    ERROR: {
+      type: 'string',
+      description: 'Error log level.',
+      default: 'error',
+    },
+  }}
+/>
+
+---
+
+## `PrintableArray`
+
+An interface for representing a summarized array for logging purposes. This is useful for preventing overly verbose logs when dealing with large arrays.
+
+<TypeTable
+  type={{
+    type: {
+      type: 'string',
+      description: 'The type of the printable object.',
+      default: 'array',
+    },
+    length: {
+      type: 'number',
+      description: 'The number of items in the array.',
+    },
+    firstItem: {
+      type: 'any',
+      description: 'The first item in the array.',
+      default: 'undefined',
+    },
+    lastItem: {
+      type: 'any',
+      description: 'The last item in the array.',
+      default: 'undefined',
+    },
+  }}
+/>
+
+---
+
+## `PrintableState`
+
+An interface for representing a summarized object state for logging. This is used to provide a snapshot of an object's state without logging the entire object.
+
+<TypeTable
+  type={{
+    '[key: string]': {
+      type: 'any | PrintableArray | PrintableState',
+      description: 'A key-value map representing the state of an object.',
+    },
+  }}
+/>

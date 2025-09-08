@@ -1,0 +1,9 @@
+{
+    "root": true,
+    "title": "ADAAS SDK",
+    "description": "Complete ADAAS SDK documentation",
+    "icon": "Code",
+    "pages": [
+        "..."
+    ]
+}

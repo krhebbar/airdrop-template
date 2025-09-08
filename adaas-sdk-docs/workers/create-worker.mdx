@@ -1,0 +1,52 @@
+---
+title: 'Create Worker'
+description: 'Documentation for the createWorker function in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# `createWorker`
+
+This page documents the `createWorker` function, which is used to create a new worker thread.
+
+## Grounding
+
+- **Source File:** `src/workers/create-worker.ts`
+
+---
+
+## Function: `createWorker`
+
+This function creates a new Node.js `Worker` instance. It is an asynchronous function that returns a `Promise` that resolves with the `Worker` object once it is online.
+
+### Signature
+
+```typescript
+async function createWorker<ConnectorState>(
+  workerData: WorkerData<ConnectorState>
+): Promise<Worker>
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    workerData: {
+      type: 'WorkerData<ConnectorState>',
+      description: 'The data to be passed to the worker thread.',
+    },
+  }}
+/>
+
+### Returns
+
+A `Promise` that resolves with the `Worker` instance.
+
+### Error Conditions
+
+This function will reject the `Promise` if:
+- It is not called from the main thread.
+- An error occurs while the worker is starting up.

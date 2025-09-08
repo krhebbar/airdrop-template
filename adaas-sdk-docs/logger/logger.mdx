@@ -1,0 +1,151 @@
+---
+title: 'Logger Class'
+description: 'Documentation for the Logger class in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Logger Class
+
+The `Logger` class is a custom logging utility that extends the built-in `node:console` module. It provides tagged logging and can be used in both the main thread and worker threads.
+
+## Grounding
+
+- **Source File:** `src/logger/logger.ts`
+
+## Constructor
+
+The constructor initializes a new `Logger` instance.
+
+### Signature
+
+```typescript
+constructor({ event, options }: LoggerFactoryInterface)
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    event: {
+      type: 'AirdropEvent',
+      description: 'The Airdrop event that provides context for the logs.',
+    },
+    options: {
+      type: 'WorkerAdapterOptions',
+      description: 'Optional configuration for the worker adapter.',
+      default: 'undefined',
+    },
+  }}
+/>
+
+## Methods
+
+The `Logger` class provides the following methods for logging:
+
+### `log`
+
+Writes an informational message to the console.
+
+#### Signature
+
+```typescript
+log(...args: unknown[]): void
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    '...args': {
+      type: 'unknown[]',
+      description: 'The message or objects to log.',
+    },
+  }}
+/>
+
+### `info`
+
+Writes an informational message to the console. Alias for `log`.
+
+#### Signature
+
+```typescript
+info(...args: unknown[]): void
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    '...args': {
+      type: 'unknown[]',
+      description: 'The message or objects to log.',
+    },
+  }}
+/>
+
+### `warn`
+
+Writes a warning message to the console.
+
+#### Signature
+
+```typescript
+warn(...args: unknown[]): void
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    '...args': {
+      type: 'unknown[]',
+      description: 'The message or objects to log as a warning.',
+    },
+  }}
+/>
+
+### `error`
+
+Writes an error message to the console.
+
+#### Signature
+
+```typescript
+error(...args: unknown[]): void
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    '...args': {
+      type: 'unknown[]',
+      description: 'The message or objects to log as an error.',
+    },
+  }}
+/>
+
+## Usage Example
+
+```typescript
+import { Logger } from './logger';
+import { AirdropEvent } from '../types/extraction';
+
+// Create a mock AirdropEvent
+const mockEvent: AirdropEvent = {
+  // ... (populate with necessary event data)
+};
+
+// Create a new logger instance
+const logger = new Logger({ event: mockEvent });
+
+// Log messages
+logger.info('This is an informational message.');
+logger.warn('This is a warning message.');
+logger.error('This is an error message.');
+```

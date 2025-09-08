@@ -1,0 +1,102 @@
+---
+title: 'Worker Types'
+description: 'Documentation for the worker-related types in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Worker Types
+
+This page documents the enums, interfaces, and type definitions used for managing worker threads.
+
+## Grounding
+
+- **Source File:** `src/types/workers.ts`
+
+---
+
+## Enums
+
+### `WorkerEvent`
+
+Defines the standard events that can be emitted by a worker thread.
+- `message`
+- `online`
+- `error`
+- `exit`
+
+### `WorkerMessageSubject`
+
+Defines the subjects for messages passed between the main thread and a worker thread.
+- `WorkerMessageEmitted`: For events emitted by the worker.
+- `WorkerMessageExit`: To signal the worker to exit.
+- `WorkerMessageLog`: For log messages from the worker.
+
+---
+
+## Core Interfaces
+
+### `SpawnFactoryInterface<ConnectorState>`
+
+The interface for the factory function that spawns a new worker.
+
+<TypeTable
+  type={{
+    event: { type: 'AirdropEvent' },
+    initialState: { type: 'ConnectorState' },
+    workerPath: { type: 'string', default: 'undefined' },
+    options: { type: 'WorkerAdapterOptions', default: 'undefined' },
+    initialDomainMapping: { type: 'InitialDomainMapping', default: 'undefined' },
+  }}
+/>
+
+### `WorkerAdapterInterface<ConnectorState>`
+
+The interface for the `WorkerAdapter` class.
+
+<TypeTable
+  type={{
+    event: { type: 'AirdropEvent' },
+    adapterState: { type: 'State<ConnectorState>' },
+    options: { type: 'WorkerAdapterOptions', default: 'undefined' },
+  }}
+/>
+
+### `WorkerAdapterOptions`
+
+Options for configuring a `WorkerAdapter`.
+
+<TypeTable
+  type={{
+    isLocalDevelopment: { type: 'boolean', default: 'undefined' },
+    timeout: { type: 'number', default: 'undefined' },
+    batchSize: { type: 'number', default: 'undefined' },
+  }}
+/>
+
+### `ProcessTaskInterface<ConnectorState>`
+
+Defines the structure for a task to be processed by a worker.
+
+<TypeTable
+  type={{
+    task: { type: '(params: TaskAdapterInterface<ConnectorState>) => Promise<void>' },
+    onTimeout: { type: '(params: TaskAdapterInterface<ConnectorState>) => Promise<void>' },
+  }}
+/>
+
+### `WorkerData<ConnectorState>`
+
+The data object passed to a new worker thread.
+
+---
+
+## Other Interfaces
+
+- **`SpawnInterface`**: Interface for the `Spawn` class.
+- **`TaskAdapterInterface<ConnectorState>`**: Interface for the `TaskAdapter` class.
+- **`WorkerMessage`**: A union type for all possible worker messages.
+- **`GetWorkerPathInterface`**: Interface for getting the worker path.

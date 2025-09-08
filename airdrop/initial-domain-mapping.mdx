@@ -1,0 +1,171 @@
+Initial domain mapping is a process that establishes relationships between 
+external data schemas and DevRev's native record types. 
+This mapping is configured once and then becomes available to all users of your snap-in,
+allowing them to import data while maintaining semantic meaning from their source systems.
+
+The initial domain mapping is installed with your snap-in.
+On each snap-in version update, function to upload these mappings to the Airdrop
+system is triggered.
+
+## Approaches
+
+You can create initial domain mappings using two methods:
+
+1. **Chef UI**: Interactive web interface for comprehensive mapping creation
+2. **Model Context Protocol (MCP)**: AI-assisted mapping creation for developers (experimental)
+
+Choose the Chef UI for manual control or use MCP for rapid prototyping with AI assistance.
+MCP is an experimental feature and works locally without requiring a sync to be created.
+
+<Info>
+For AI-assisted mapping creation, see the [Model Context Protocol integration guide](./mcp.mdx).
+</Info>
+
+## Chef UI setup
+
+### Prerequisites
+
+- Snap-in is set up, deployed, and activated.
+- An import has been created and is in the mapping stage.
+
+It's also required that you have the DevRev CLI authenticated appropriately. 
+This can be done either with `devrev profiles authenticate -e prod -o <your_org_slug> -u <your_email>` 
+or by running `make auth` in your snap-in repository.
+
+<Steps>
+
+### Add your token as an environment variable
+   
+Obtain a PAT-token from the **Settings** > **Account** tab of the org where you deploy your snap-in, 
+and export it as `DEVREV_TOKEN`. 
+
+You can also run the following command if you are authenticated with the CLI:
+```bash
+export DEVREV_TOKEN=$(devrev profiles get-token access)
+```
+
+### Initialize the context of the sync
+
+To allow the CLI to work in the context of that sync, you need to provide its identifying properties in an environment variable.
+The recommended method is to run:
+
+```bash
+chef-cli ctx switch --env prod
+```
+
+This prints the list of Airdrop imports in the org. Select the one you want by running:
+```bash
+eval $(chef-cli ctx switch --env prod --id <import_id>); chef-cli ctx show
+```
+
+If this method doesn't work, you can manually export the variable (replacing the values based on the logs of your running import):
+
+```bash
+export AIRDROP_CONTEXT='{"run_id":"1","mode":"initial","connection_id":"x","migration_unit_id":"1234","dev_org_id":"DEV-XXXX","dev_user_id":"DEVU-1","source_id":"07-16","source_type":"ADaaS","source_unit_id":"x","source_unit_name":"x","import_slug":"x","snap_in_slug":"x"}'
+```
+
+Or you can use the interactive helper of the CLI:
+
+```bash
+eval $(chef-cli ctx init); chef-cli ctx show > ctx.json
+```
+
+### Use the Chef UI
+
+```bash
+chef-cli configure-mappings --env prod
+```
+
+If your org is not in `US-East-1`, you h ave to override an environment variable to make sure the tool reaches the right server. For example:
+```bash
+ACTIVE_PARTITION=dvrv-in-1 chef-cli configure-mappings --env prod
+```
+
+The options are: `dvrv-us-1`, `dvrv-eu-1`, `dvrv-in-1`, and `dvrv-de-1`.
+
+The first function of the Chef UI is to assemble a *blueprint* for a concrete import running in the test-org, allowing the mapping to be tested out and evaluated.
+After it is used for the import, the mappings become immutable, but the Chef UI offers a button to make a draft clone, which can be edited again for refinements.
+
+### Continue to initial domain mapping
+
+When you are done, you should have the chef-cli context set up and have the Chef UI running in your browser.
+You can now use the Chef UI to create initial domain mappings.
+
+</Steps>
+
+## Use the Chef UI to create initial domain mappings
+
+The Chef UI generates an `initial_domain_mapping.json` file that must be embedded in your extractor. This defines the options that the end-user sees when they are mapping the data.
+
+Initial domain mappings provide two key configuration capabilities:
+
+- **Multiple mapping options**: The developer can choose how external record types map to DevRev records (for example, external *task* can map to either *issue* or *ticket*).
+- **Category-based defaults**: Mappings can apply to entire record type categories, automatically handling new record types.
+
+<Steps>
+
+### Map record types and fields
+
+Use the Chef UI to map record types and fields.
+The UI displays the external record types you defined in external domain metadata and allows you to map them to DevRev objects.
+Map one record type at a time, ensuring you map all required fields and as many optional fields as possible.
+
+#### Mapping as custom object
+The system allows importing record types and categories as custom objects. To achieve this you have to select `new_custom_object` when mapping the record type. For each external record type mapped as a custom object, a new custom **Leaf type** will be defined in DevRev and a **Subtype** will automatically be created. For more details on customization concepts, please refer to the
+[Customization](../customization.mdx) and [Custom Objects](../custom-objects.mdx)  documentation.
+
+The field mapping works the same as for the stock DevRev types, with the difference being that there are significantly fewer fields to map. All the unmapped fields of the external record type will be created as custom fields.
+
+### Specify fallback mappings
+
+For some required DevRev fields a fallback is required.
+
+The fallback you choose is used on item creation if the extractor doesn't provide a value for the required DevRev field. 
+This is useful for fields that are required by DevRev but optional in the external system.
+
+### Install the blueprint
+
+Apply the mappings and **install them in your org** to access the initial domain mapping creation screen.
+Follow the instructions to create your initial domain mapping.
+
+### Merge configurations
+
+To create multiple mappings for different record types and fields, repeat this process:
+Create a new import, map the record types and fields, then install the mappings in your org.
+The install screen allows you to merge new mappings with existing initial domain mappings.
+
+### Export the mapping file
+
+When all fields are mapped correctly, click **Export** to download `initial_domain_mapping.json`.
+
+</Steps>
+
+### Advanced configuration
+
+You can provide a local metadata file for enhanced functionality:
+
+```bash
+chef-cli configure-mappings --env prod -m metadata.json
+```
+
+This enables:
+- Raw jq transformations using external fields as input (experimental)
+- Example input data for testing transformations
+
+<Warning>
+The local metadata file is not validated against the snap-in submission.
+</Warning>
+
+### Test an import with initial mapping using the in-app UI
+
+Once the initial mappings are prepared, any new import in the org (with the same snap-in slug and import slug) where they are installed will use them. 
+The end-users can influence the recipe blueprint that gets created for the sync unit through the mapping screen in the UI, where they can make record-type filtering, mapping, fine-grained filtering, low-code field and value mapping, and finally custom field filtering.
+
+Their decisions are constrained by the choices provided in the initial domain mappings. 
+Currently, the low-code UI offers limited insight into the mappings and their reasons, and in some cases, mismatches arise when something that worked in chef-cli doesn't offer the right options to the user, or not all fields that should be resolved are solved. 
+To assist debugging such cases, chef-cli provides a command to extract the description of the low-code decisions that are asked in the UI. 
+Please provide this to us when reporting an issue with how the end-user mapping UI behaves.
+
+```bash
+chef-cli low-code --env prod > low_code.json
+```

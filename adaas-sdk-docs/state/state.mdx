@@ -1,0 +1,133 @@
+---
+title: 'State Management'
+description: 'Documentation for the State class and related functions in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# State Management
+
+This page documents the `State` class and the `createAdapterState` factory function, which are responsible for managing state between sync executions.
+
+## Grounding
+
+- **Source File:** `src/state/state.ts`
+
+---
+
+## `createAdapterState`
+
+A factory function that creates and initializes a `State` instance. It fetches the existing state, handles the installation of the initial domain mapping, and sets the `lastSyncStarted` timestamp.
+
+### Signature
+
+```typescript
+export async function createAdapterState<ConnectorState>({
+  event,
+  initialState,
+  initialDomainMapping,
+  options,
+}: StateInterface<ConnectorState>): Promise<State<ConnectorState>>
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    '{...}': {
+      type: 'StateInterface<ConnectorState>',
+      description: 'The initialization object for the state.',
+    },
+  }}
+/>
+
+### Returns
+
+A `Promise` that resolves with a fully initialized `State` instance.
+
+---
+
+## `State<ConnectorState>` Class
+
+A generic class that provides an interface for fetching and updating the adapter's state.
+
+### Constructor
+
+The constructor initializes a new `State` instance with an initial state.
+
+#### Signature
+
+```typescript
+constructor({ event, initialState }: StateInterface<ConnectorState>)
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    '{...}': {
+      type: 'StateInterface<ConnectorState>',
+      description: 'The initialization object.',
+    },
+  }}
+/>
+
+### Properties
+
+- **`state`**: A getter/setter for the adapter state.
+
+### Methods
+
+#### `postState`
+
+Updates the state on the DevRev platform. If no state is provided, it uses the current state of the instance.
+
+##### Signature
+
+```typescript
+async postState(state?: AdapterState<ConnectorState>)
+```
+
+##### Parameters
+
+<TypeTable
+  type={{
+    state: {
+      type: 'AdapterState<ConnectorState>',
+      description: 'The optional state object to post.',
+      default: 'current instance state',
+    },
+  }}
+/>
+
+---
+
+#### `fetchState`
+
+Fetches the state from the DevRev platform. If no state is found (e.g., on the first run), it initializes the state with the provided initial state.
+
+##### Signature
+
+```typescript
+async fetchState(
+  initialState: ConnectorState
+): Promise<AdapterState<ConnectorState> | ErrorRecord>
+```
+
+##### Parameters
+
+<TypeTable
+  type={{
+    initialState: {
+      type: 'ConnectorState',
+      description: 'The initial state to use if no state is found on the platform.',
+    },
+  }}
+/>
+
+##### Returns
+
+A `Promise` that resolves with the fetched state or an `ErrorRecord` if an error occurs.

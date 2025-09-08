@@ -1,0 +1,89 @@
+---
+title: 'Spawning Workers'
+description: 'Documentation for the spawn function and Spawn class in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Spawning Workers
+
+This page documents the `spawn` function and the `Spawn` class, which are used to create and manage worker threads for handling background tasks.
+
+## Grounding
+
+- **Source File:** `src/workers/spawn.ts`
+
+---
+
+## `spawn`
+
+The `spawn` function is the main entry point for creating a new worker. It determines the correct worker script to use based on the event type, creates the worker, and manages its lifecycle.
+
+### Signature
+
+```typescript
+export async function spawn<ConnectorState>({
+  event,
+  initialState,
+  workerPath,
+  initialDomainMapping,
+  options,
+}: SpawnFactoryInterface<ConnectorState>): Promise<void>
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    '{...}': {
+      type: 'SpawnFactoryInterface<ConnectorState>',
+      description: 'The factory object for creating the worker.',
+    },
+  }}
+/>
+
+### Returns
+
+A `Promise` that resolves when the worker has completed its task and exited.
+
+---
+
+## `Spawn` Class
+
+The `Spawn` class is responsible for the low-level management of a worker thread's lifecycle. It handles timeouts and messages from the worker.
+
+### Timeouts
+
+The `Spawn` class implements a two-stage timeout mechanism:
+- **Soft Timeout:** After a configurable duration (defaulting to 10 minutes), a message is sent to the worker requesting a graceful exit.
+- **Hard Timeout:** If the worker does not exit within a certain time after the soft timeout, it is forcefully terminated.
+
+### Message Handling
+
+The `Spawn` class listens for messages from the worker, which can be used for:
+- **Logging:** The worker can send log messages to be printed by the main thread.
+- **Emitting Events:** The worker can signal that it has emitted an event to the ADaaS platform.
+
+### Constructor
+
+The constructor initializes a new `Spawn` instance and sets up the timeout and message handlers.
+
+#### Signature
+
+```typescript
+constructor({ event, worker, options, resolve }: SpawnInterface)
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    '{...}': {
+      type: 'SpawnInterface',
+      description: 'The initialization object for the Spawn instance.',
+    },
+  }}
+/>

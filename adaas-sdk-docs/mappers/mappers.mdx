@@ -1,0 +1,125 @@
+---
+title: 'Mappers Class'
+description: 'Documentation for the Mappers class in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Mappers Class
+
+The `Mappers` class provides an interface to the sync-mapper-record API, allowing you to create, update, and retrieve sync mapper records.
+
+## Grounding
+
+- **Source File:** `src/mappers/mappers.ts`
+
+## Constructor
+
+The constructor initializes a new `Mappers` instance.
+
+### Signature
+
+```typescript
+constructor({ event }: MappersFactoryInterface)
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    event: {
+      type: 'AirdropEvent',
+      description: 'The Airdrop event that provides context, including the DevRev endpoint and API token.',
+    },
+  }}
+/>
+
+## Methods
+
+### `getByTargetId`
+
+Retrieves a sync mapper record by its target ID.
+
+#### Signature
+
+```typescript
+async getByTargetId(
+  params: MappersGetByTargetIdParams
+): Promise<AxiosResponse<MappersGetByTargetIdResponse>>
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    params: {
+      type: 'MappersGetByTargetIdParams',
+      description: 'The parameters for the getByTargetId request.',
+    },
+  }}
+/>
+
+#### Returns
+
+A `Promise` that resolves with an `AxiosResponse` containing the sync mapper record.
+
+---
+
+### `create`
+
+Creates a new sync mapper record.
+
+#### Signature
+
+```typescript
+async create(
+  params: MappersCreateParams
+): Promise<AxiosResponse<MappersCreateResponse>>
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    params: {
+      type: 'MappersCreateParams',
+      description: 'The parameters for the create request.',
+    },
+  }}
+/>
+
+#### Returns
+
+A `Promise` that resolves with an `AxiosResponse` containing the newly created sync mapper record.
+
+---
+
+### `update`
+
+Updates an existing sync mapper record.
+
+#### Signature
+
+```typescript
+async update(
+  params: MappersUpdateParams
+): Promise<AxiosResponse<MappersUpdateResponse>>
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    params: {
+      type: 'MappersUpdateParams',
+      description: 'The parameters for the update request.',
+    },
+  }}
+/>
+
+#### Returns
+
+A `Promise` that resolves with an `AxiosResponse` containing the updated sync mapper record.

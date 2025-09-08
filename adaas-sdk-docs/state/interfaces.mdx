@@ -1,0 +1,93 @@
+---
+title: 'State Interfaces'
+description: 'Documentation for interfaces in the State module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# State Interfaces
+
+This page documents the interfaces used in the `State` module for managing state between syncs.
+
+## Grounding
+
+- **Source File:** `src/state/state.interfaces.ts`
+
+---
+
+## `SdkState`
+
+The core state managed by the SDK, which is combined with the connector-specific state.
+
+<TypeTable
+  type={{
+    lastSyncStarted: { type: 'string', default: 'undefined' },
+    lastSuccessfulSyncStarted: { type: 'string', default: 'undefined' },
+    toDevRev: { type: 'ToDevRev', default: 'undefined' },
+    fromDevRev: { type: 'FromDevRev', default: 'undefined' },
+    snapInVersionId: { type: 'string', default: 'undefined' },
+  }}
+/>
+
+---
+
+## `AdapterState<ConnectorState>`
+
+A generic type that combines the `SdkState` with a connector-specific state object.
+
+```typescript
+export type AdapterState<ConnectorState> = ConnectorState & SdkState;
+```
+
+---
+
+## `ToDevRev`
+
+Defines the structure of the state for syncs that send data *to* DevRev.
+
+<TypeTable
+  type={{
+    attachmentsMetadata: {
+      type: 'object',
+      description: 'Metadata about attachments that have been processed.',
+      properties: {
+        artifactIds: { type: 'string[]' },
+        lastProcessed: { type: 'number' },
+        lastProcessedAttachmentsIdsList: { type: 'string[]', default: 'undefined' },
+      }
+    },
+  }}
+/>
+
+---
+
+## `FromDevRev`
+
+Defines the structure of the state for syncs that receive data *from* DevRev.
+
+<TypeTable
+  type={{
+    filesToLoad: {
+      type: 'FileToLoad[]',
+      description: 'An array of files to be loaded.',
+    },
+  }}
+/>
+
+---
+
+## `StateInterface<ConnectorState>`
+
+Defines the structure of the object used to initialize the `State` class.
+
+<TypeTable
+  type={{
+    event: { type: 'AirdropEvent' },
+    initialState: { type: 'ConnectorState' },
+    initialDomainMapping: { type: 'InitialDomainMapping', default: 'undefined' },
+    options: { type: 'WorkerAdapterOptions', default: 'undefined' },
+  }}
+/>

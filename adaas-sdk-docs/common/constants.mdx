@@ -1,0 +1,118 @@
+---
+title: 'Constants'
+description: 'Documentation for the constants used in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Constants
+
+This page documents the constants used throughout the SDK.
+
+## Grounding
+
+- **Source File:** `src/common/constants.ts`
+
+---
+
+## Event Type Constants
+
+These constants define lists of `EventType` enums that are used to control event processing.
+
+<TypeTable
+  type={{
+    'STATELESS_EVENT_TYPES': {
+      type: 'EventType[]',
+      description: 'An array of event types that do not require state management.',
+    },
+    'ALLOWED_EXTRACTION_EVENT_TYPES': {
+      type: 'EventType[]',
+      description: 'An array of event types that are allowed for data extraction.',
+    },
+    'ALLOWED_LOADING_EVENT_TYPES': {
+      type: 'EventType[]',
+      description: 'An array of event types that are allowed for data loading.',
+    },
+    'ALLOWED_EVENT_TYPES': {
+      type: 'EventType[]',
+      description: 'A comprehensive array of all allowed event types.',
+    },
+  }}
+/>
+
+---
+
+## Artifact and File Size Constants
+
+These constants define size and length limits for artifacts and filenames.
+
+<TypeTable
+  type={{
+    'ARTIFACT_BATCH_SIZE': {
+      type: 'number',
+      description: 'The number of artifacts to process in a single batch.',
+      default: '2000',
+    },
+    'MAX_DEVREV_ARTIFACT_SIZE': {
+      type: 'number',
+      description: 'The maximum size of an artifact in bytes (250MB).',
+      default: '262144000',
+    },
+    'MAX_DEVREV_FILENAME_LENGTH': {
+      type: 'number',
+      description: 'The maximum length of a filename.',
+      default: '256',
+    },
+    'MAX_DEVREV_FILENAME_EXTENSION_LENGTH': {
+      type: 'number',
+      description: 'The maximum length of a filename extension.',
+      default: '20',
+    },
+  }}
+/>
+
+---
+
+## Airdrop Constants
+
+Constants related to the Airdrop service.
+
+<TypeTable
+  type={{
+    'AIRDROP_DEFAULT_ITEM_TYPES': {
+      type: 'object',
+      description: 'An object containing the default item types for Airdrop.',
+    },
+  }}
+/>
+
+---
+
+## Version and Timeout Constants
+
+<TypeTable
+  type={{
+    'LIBRARY_VERSION': {
+      type: 'string',
+      description: 'The version of the SDK library.',
+    },
+    'DEFAULT_LAMBDA_TIMEOUT': {
+      type: 'number',
+      description: 'The default timeout for Lambda functions in milliseconds (10 minutes).',
+      default: '600000',
+    },
+    'HARD_TIMEOUT_MULTIPLIER': {
+      type: 'number',
+      description: 'A multiplier used to calculate a hard timeout.',
+      default: '1.3',
+    },
+    'DEFAULT_SLEEP_DELAY_MS': {
+      type: 'number',
+      description: 'The default sleep delay in milliseconds (3 minutes).',
+      default: '180000',
+    },
+  }}
+/>

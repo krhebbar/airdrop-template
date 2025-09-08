@@ -1,0 +1,141 @@
+---
+title: 'Loading Types'
+description: 'Documentation for the data loading types in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Loading Types
+
+This page documents the enums, interfaces, and type definitions used in the data loading process.
+
+## Grounding
+
+- **Source File:** `src/types/loading.ts`
+
+---
+
+## Enums
+
+### `LoaderEventType`
+
+Defines the types of events sent from the loader to the ADaaS platform to report progress and status.
+
+### `ActionType`
+
+Defines the possible actions that can be reported in a `LoaderReport`.
+- `CREATED`
+- `UPDATED`
+- `SKIPPED`
+- `DELETED`
+- `FAILED`
+
+---
+
+## Core Interfaces
+
+### `ExternalSystemItem`
+
+Represents a generic item from an external system that is to be loaded into DevRev.
+
+<TypeTable
+  type={{
+    id: { type: 'object', properties: { devrev: { type: 'DonV2' }, external: { type: 'string', default: 'undefined' } } },
+    created_date: { type: 'string' },
+    modified_date: { type: 'string' },
+    data: { type: 'any' },
+  }}
+/>
+
+### `ExternalSystemAttachment`
+
+Represents an attachment from an external system to be loaded into DevRev.
+
+### `LoaderReport`
+
+A report on the status of a loading operation for a specific item type.
+
+<TypeTable
+  type={{
+    item_type: { type: 'string' },
+    created: { type: 'number', default: 'undefined' },
+    updated: { type: 'number', default: 'undefined' },
+    skipped: { type: 'number', default: 'undefined' },
+    deleted: { type: 'number', default: 'undefined' },
+    failed: { type: 'number', default: 'undefined' },
+  }}
+/>
+
+### `FileToLoad`
+
+Represents a file that needs to be processed by the loader.
+
+<TypeTable
+  type={{
+    id: { type: 'string' },
+    file_name: { type: 'string' },
+    itemType: { type: 'string' },
+    count: { type: 'number' },
+    lineToProcess: { type: 'number' },
+    completed: { type: 'boolean' },
+  }}
+/>
+
+### `StatsFileObject`
+
+Represents an object in a statistics file.
+
+<TypeTable
+  type={{
+    id: { type: 'string' },
+    item_type: { type: 'string' },
+    file_name: { type: 'string' },
+    count: { type: 'string' },
+  }}
+/>
+
+---
+
+## Function Types and Parameters
+
+### `ExternalSystemLoadingFunction<Item>`
+
+A generic function type for loading an item into DevRev.
+
+```typescript
+type ExternalSystemLoadingFunction<Item> =
+  ({ item, mappers, event }: ExternalSystemItemLoadingParams<Item>)
+  => Promise<ExternalSystemItemLoadingResponse>;
+```
+
+### `ExternalSystemItemLoadingParams<Type>`
+
+Parameters for the `ExternalSystemLoadingFunction`.
+
+### `ExternalSystemItemLoadingResponse`
+
+The response from an `ExternalSystemLoadingFunction`.
+
+### `ItemTypeToLoad`
+
+Defines the loading functions for a specific item type.
+
+<TypeTable
+  type={{
+    itemType: { type: 'string' },
+    create: { type: 'ExternalSystemLoadingFunction<ExternalSystemItem>' },
+    update: { type: 'ExternalSystemLoadingFunction<ExternalSystemItem>' },
+  }}
+/>
+
+---
+
+## Other Types
+
+- **`DonV2`**: A type alias for a string, representing a DevRev object reference.
+- **`RateLimited`**: An interface for rate limit information.
+- **`LoadItemResponse`**: The response from loading a single item.
+- **`LoadItemTypesResponse`**: The overall response from loading multiple item types.

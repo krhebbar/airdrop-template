@@ -1,0 +1,8 @@
+{
+  "title": "Logger",
+  "pages": [
+    "logger",
+    "interfaces",
+    "helpers"
+  ]
+}

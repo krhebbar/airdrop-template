@@ -1,0 +1,46 @@
+---
+title: 'HTTP Types'
+description: 'Documentation for the types used in the HTTP module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# HTTP Types
+
+This page documents the interfaces and type definitions used in the HTTP module.
+
+## Grounding
+
+- **Source File:** `src/http/types.ts`
+
+---
+
+## `Data` Interface
+
+An interface that defines the structure of the data object within an HTTP response.
+
+<TypeTable
+  type={{
+    records: {
+      type: 'object[]',
+      description: 'A list of records of the entity.',
+    },
+    delay: {
+      type: 'number',
+      description: 'The delay in seconds to wait before the next call, used for rate limiting.',
+    },
+    nextPage: {
+      type: 'number',
+      description: 'The next page of the entity to be processed.',
+      default: 'undefined',
+    },
+    metadata: {
+      type: 'object',
+      description: 'Other information that should be returned.',
+      default: 'undefined',
+    },
+  }}
+/>

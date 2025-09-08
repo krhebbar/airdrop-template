@@ -1,0 +1,62 @@
+---
+title: 'Install Initial Domain Mapping'
+description: 'Documentation for the installInitialDomainMapping function in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# `installInitialDomainMapping`
+
+This page documents the `installInitialDomainMapping` function, which is used to install initial domain mappings for a snap-in.
+
+## Grounding
+
+- **Source File:** `src/common/install-initial-domain-mapping.ts`
+
+---
+
+## Function: `installInitialDomainMapping`
+
+This function installs the initial domain mappings for a snap-in. It first retrieves the snap-in details, then creates a recipe blueprint if one is provided, and finally installs the domain mappings.
+
+### Signature
+
+```typescript
+export async function installInitialDomainMapping(
+  event: AirdropEvent,
+  initialDomainMappingJson: InitialDomainMapping
+): Promise<void>
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    event: {
+      type: 'AirdropEvent',
+      description: 'The Airdrop event that provides the context for the installation.',
+    },
+    initialDomainMappingJson: {
+      type: 'InitialDomainMapping',
+      description: 'An object containing the initial domain mapping configuration.',
+    },
+  }}
+/>
+
+### Returns
+
+A `Promise` that resolves when the installation is complete.
+
+### Error Conditions
+
+This function can throw an error in the following cases:
+
+- If the snap-in details (import slug or snap-in slug) cannot be found.
+- If the request to install the initial domain mappings fails.
+
+The function will log a warning if creating the recipe blueprint fails, but it will not throw an error in that case. It will simply proceed without the recipe blueprint.
+
+Any `AxiosError`s that occur during the API calls will be thrown. You can use the `serializeAxiosError` helper from the `logger` module to get a serializable representation of the error.

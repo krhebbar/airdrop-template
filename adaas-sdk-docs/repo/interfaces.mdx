@@ -1,0 +1,113 @@
+---
+title: 'Repo Interfaces'
+description: 'Documentation for interfaces in the Repo module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Repo Interfaces
+
+This page documents the interfaces used in the `Repo` module.
+
+## Grounding
+
+- **Source File:** `src/repo/repo.interfaces.ts`
+
+---
+
+## `RepoInterface`
+
+Defines the structure of a repository used for storing and uploading extracted data.
+
+<TypeTable
+  type={{
+    itemType: {
+      type: 'string',
+      description: 'The type of item the repository will handle.',
+    },
+    normalize: {
+      type: '(record: object) => NormalizedItem | NormalizedAttachment',
+      description: 'An optional function to normalize records before they are added to the repository.',
+      default: 'undefined',
+    },
+  }}
+/>
+
+---
+
+## `RepoFactoryInterface`
+
+Defines the structure of the factory object used to create a `Repo` instance.
+
+<TypeTable
+  type={{
+    event: {
+      type: 'AirdropEvent',
+      description: 'The Airdrop event that provides context.',
+    },
+    itemType: {
+      type: 'string',
+      description: 'The type of item the repository will handle.',
+    },
+    normalize: {
+      type: '(record: object) => NormalizedItem | NormalizedAttachment',
+      description: 'An optional function to normalize records.',
+      default: 'undefined',
+    },
+    onUpload: {
+      type: '(artifact: Artifact) => void',
+      description: 'A callback function that is executed when an artifact is uploaded.',
+    },
+    options: {
+      type: 'WorkerAdapterOptions',
+      description: 'Optional configuration for the worker adapter.',
+      default: 'undefined',
+    },
+  }}
+/>
+
+---
+
+## `NormalizedItem`
+
+Represents an item after it has been normalized.
+
+<TypeTable
+  type={{
+    id: { type: 'string' },
+    created_date: { type: 'string' },
+    modified_date: { type: 'string' },
+    data: { type: 'object' },
+  }}
+/>
+
+---
+
+## `NormalizedAttachment`
+
+Represents an attachment after it has been normalized.
+
+<TypeTable
+  type={{
+    url: { type: 'string' },
+    id: { type: 'string' },
+    file_name: { type: 'string' },
+    parent_id: { type: 'string' },
+    author_id: { type: 'string', default: 'undefined' },
+    inline: { type: 'boolean', default: 'undefined' },
+    grand_parent_id: { type: 'number | string', default: 'undefined' },
+  }}
+/>
+
+---
+
+## `Item` Type
+
+A generic type for an item, defined as a record with string keys and any value.
+
+```typescript
+export type Item = Record<string, any>;
+```

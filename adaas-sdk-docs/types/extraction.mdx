@@ -1,0 +1,147 @@
+---
+title: 'Extraction Types'
+description: 'Documentation for the data extraction types in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Extraction Types
+
+This page documents the enums, interfaces, and type definitions used in the data extraction process.
+
+## Grounding
+
+- **Source File:** `src/types/extraction.ts`
+
+---
+
+## Enums
+
+### `EventType`
+
+Defines the types of events sent from the ADaaS platform to the external extractor to control the extraction and loading process.
+
+### `ExtractorEventType`
+
+Defines the types of events sent from the external extractor to the ADaaS platform to report progress and status.
+
+### `SyncMode`
+
+Defines the different modes of synchronization.
+- `INITIAL`: For the first-time import.
+- `INCREMENTAL`: For subsequent syncs.
+- `LOADING`: For loading data from DevRev.
+
+### `InitialSyncScope`
+
+Defines the scope of an initial sync.
+- `full-history`: Sync all historical data.
+- `time-scoped`: Sync data within a specific time range.
+
+---
+
+## Core Interfaces
+
+### `AirdropEvent`
+
+The main event structure sent from the ADaaS platform to the external extractor.
+
+<TypeTable
+  type={{
+    context: { type: 'object', description: 'Contains secrets and snap-in context.' },
+    payload: { type: 'AirdropMessage', description: 'The main message payload.' },
+    execution_metadata: { type: 'object', description: 'Contains the DevRev endpoint.' },
+    input_data: { type: 'InputData', description: 'Common snap-in input data.' },
+  }}
+/>
+
+### `AirdropMessage`
+
+The payload of an `AirdropEvent`.
+
+<TypeTable
+  type={{
+    connection_data: { type: 'ConnectionData' },
+    event_context: { type: 'EventContext' },
+    event_type: { type: 'EventType' },
+    event_data: { type: 'EventData', default: 'undefined' },
+  }}
+/>
+
+### `EventContext`
+
+Contains the detailed context for an event, including sync unit information, IDs, and other metadata.
+
+### `EventData`
+
+The data payload sent from the extractor to the ADaaS platform.
+
+<TypeTable
+  type={{
+    external_sync_units: { type: 'ExternalSyncUnit[]', default: 'undefined' },
+    progress: { type: 'number', default: 'undefined' },
+    error: { type: 'ErrorRecord', default: 'undefined' },
+    delay: { type: 'number', default: 'undefined' },
+    reports: { type: 'LoaderReport[]', default: 'undefined' },
+    processed_files: { type: 'string[]', default: 'undefined' },
+    stats_file: { type: 'string', default: 'undefined' },
+  }}
+/>
+
+### `ExtractorEvent` / `LoaderEvent`
+
+The structure of an event sent from the extractor/loader to the ADaaS platform.
+
+<TypeTable
+  type={{
+    event_type: { type: 'string' },
+    event_context: { type: 'EventContext' },
+    event_data: { type: 'EventData', default: 'undefined' },
+    worker_metadata: { type: 'WorkerMetadata', default: 'undefined' },
+  }}
+/>
+
+### `ExternalSyncUnit`
+
+Represents an external sync unit, such as a repository or project.
+
+<TypeTable
+  type={{
+    id: { type: 'string' },
+    name: { type: 'string' },
+    description: { type: 'string' },
+    item_count: { type: 'number', default: 'undefined' },
+    item_type: { type: 'string', default: 'undefined' },
+  }}
+/>
+
+### `ConnectionData`
+
+Contains the connection details for the external system.
+
+<TypeTable
+  type={{
+    org_id: { type: 'string' },
+    org_name: { type: 'string' },
+    key: { type: 'string' },
+    key_type: { type: 'string' },
+  }}
+/>
+
+---
+
+## Attachment Streaming
+
+Types and functions related to streaming attachments.
+
+- **`ExternalSystemAttachmentStreamingFunction`**: A function type for streaming an attachment.
+- **`ExternalSystemAttachmentStreamingParams`**: Parameters for the streaming function.
+- **`ExternalSystemAttachmentStreamingResponse`**: Response from the streaming function.
+- **`StreamAttachmentsResponse`**: The overall response for a stream attachments operation.
+- **`ExternalSystemAttachmentProcessors`**: An interface for attachment processing functions (reducer and iterator).
+- **`ExternalSystemAttachmentReducerFunction`**: A function type for reducing a batch of attachments.
+- **`ExternalSystemAttachmentIteratorFunction`**: A function type for iterating over reduced attachments.
+- **`ExternalProcessAttachmentFunction`**: A function type for processing a single attachment.

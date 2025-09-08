@@ -1,0 +1,109 @@
+---
+title: 'Mappers Interfaces & Enums'
+description: 'Documentation for interfaces and enums in the Mappers module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Mappers Interfaces & Enums
+
+This page documents the interfaces and enums used in the `Mappers` module.
+
+## Grounding
+
+- **Source File:** `src/mappers/mappers.interface.ts`
+
+---
+
+## `MappersFactoryInterface`
+
+An interface for creating a `Mappers` instance.
+
+<TypeTable
+  type={{
+    event: {
+      type: 'AirdropEvent',
+      description: 'The Airdrop event that provides context for the mappers.',
+    },
+    options: {
+      type: 'WorkerAdapterOptions',
+      description: 'Optional configuration for the worker adapter.',
+      default: 'undefined',
+    },
+  }}
+/>
+
+---
+
+## `SyncMapperRecordStatus`
+
+An enum that defines the possible statuses of a sync mapper record.
+
+<TypeTable
+  type={{
+    OPERATIONAL: {
+      type: 'string',
+      description: 'The record is operational and in use.',
+      default: 'operational',
+    },
+    FILTERED: {
+      type: 'string',
+      description: 'The record has been filtered out.',
+      default: 'filtered',
+    },
+    IGNORED: {
+      type: 'string',
+      description: 'The record has been ignored.',
+      default: 'ignored',
+    },
+  }}
+/>
+
+---
+
+## `SyncMapperRecord`
+
+An interface representing a sync mapper record.
+
+<TypeTable
+  type={{
+    id: { type: 'DonV2' },
+    external_ids: { type: 'string[]' },
+    secondary_ids: { type: 'Record<string, string>', default: 'undefined' },
+    targets: { type: 'DonV2[]' },
+    status: { type: 'SyncMapperRecordStatus' },
+    input_files: { type: 'string[]', default: 'undefined' },
+    external_versions: { type: 'SyncMapperRecordExternalVersion[]', default: 'undefined' },
+    extra_data: { type: 'string', default: 'undefined' },
+  }}
+/>
+
+---
+
+## `SyncMapperRecordExternalVersion`
+
+An interface representing the external version of a sync mapper record.
+
+<TypeTable
+  type={{
+    recipe_version: { type: 'number' },
+    modified_date: { type: 'string' },
+  }}
+/>
+
+---
+
+## API Parameter and Response Interfaces
+
+These interfaces define the structure for parameters and responses for the `Mappers` class methods.
+
+- **`MappersGetByTargetIdParams`**: Parameters for the `getByTargetId` method.
+- **`MappersGetByTargetIdResponse`**: Response from the `getByTargetId` method.
+- **`MappersCreateParams`**: Parameters for the `create` method.
+- **`MappersCreateResponse`**: Response from the `create` method.
+- **`MappersUpdateParams`**: Parameters for the `update` method.
+- **`MappersUpdateResponse`**: Response from the `update` method.
+- **`UpdateSyncMapperRecordParams`**: A specific parameter structure for updating a sync mapper record.

@@ -1,0 +1,180 @@
+---
+title: 'Worker Adapter'
+description: 'Documentation for the WorkerAdapter class in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Worker Adapter
+
+The `WorkerAdapter` is the primary tool for interacting with the ADaaS platform from within a worker. It provides methods for managing state, emitting events, and handling data extraction and loading.
+
+## Grounding
+
+- **Source File:** `src/workers/worker-adapter.ts`
+
+---
+
+## `createWorkerAdapter`
+
+A factory function that creates a new instance of the `WorkerAdapter` class.
+
+### Signature
+
+```typescript
+export function createWorkerAdapter<ConnectorState>({
+  event,
+  adapterState,
+  options,
+}: WorkerAdapterInterface<ConnectorState>): WorkerAdapter<ConnectorState>
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    '{...}': {
+      type: 'WorkerAdapterInterface<ConnectorState>',
+      description: 'The initialization object for the adapter.',
+    },
+  }}
+/>
+
+### Returns
+
+A new instance of `WorkerAdapter<ConnectorState>`.
+
+---
+
+## `WorkerAdapter<ConnectorState>` Class
+
+### Constructor
+
+Initializes a new `WorkerAdapter` instance.
+
+#### Signature
+
+```typescript
+constructor({
+  event,
+  adapterState,
+  options,
+}: WorkerAdapterInterface<ConnectorState>)
+```
+
+### Properties
+
+- **`event`**: The `AirdropEvent` that triggered the worker.
+- **`options`**: The `WorkerAdapterOptions` for this instance.
+- **`state`**: A getter/setter for the connector's state.
+- **`artifacts`**: An array of `Artifact` objects that have been uploaded.
+- **`reports`**: An array of `LoaderReport` objects.
+- **`processedFiles`**: An array of file IDs that have been processed.
+
+### Core Methods
+
+#### `emit`
+
+Emits an event to the ADaaS platform. This is the primary way for a worker to communicate its progress and status.
+
+##### Signature
+
+```typescript
+async emit(
+  newEventType: ExtractorEventType | LoaderEventType,
+  data?: EventData
+): Promise<void>
+```
+
+#### `postState`
+
+Saves the current state of the adapter to the platform.
+
+##### Signature
+
+```typescript
+async postState(): Promise<void>
+```
+
+### Repository Management
+
+#### `initializeRepos`
+
+Initializes one or more `Repo` instances for batching and uploading data.
+
+##### Signature
+
+```typescript
+initializeRepos(repos: RepoInterface[]): void
+```
+
+#### `getRepo`
+
+Retrieves an initialized `Repo` by its item type.
+
+##### Signature
+
+```typescript
+getRepo(itemType: string): Repo | undefined
+```
+
+#### `uploadAllRepos`
+
+Uploads all data currently stored in all initialized repositories.
+
+##### Signature
+
+```typescript
+async uploadAllRepos(): Promise<void>
+```
+
+### Data Loading Methods
+
+#### `loadItemTypes`
+
+Loads items of different types from DevRev. It orchestrates the process of fetching data, mapping it, and calling the appropriate `create` or `update` functions.
+
+##### Signature
+
+```typescript
+async loadItemTypes({
+  itemTypesToLoad,
+}: ItemTypesToLoadParams): Promise<LoadItemTypesResponse>
+```
+
+#### `loadAttachments`
+
+Loads attachments from DevRev.
+
+##### Signature
+
+```typescript
+async loadAttachments({
+  create,
+}: {
+  create: ExternalSystemLoadingFunction<ExternalSystemAttachment>;
+}): Promise<LoadItemTypesResponse>
+```
+
+### Attachment Streaming
+
+#### `streamAttachments`
+
+Streams attachments from an external system to the DevRev platform. This method is designed to handle large files efficiently.
+
+##### Signature
+
+```typescript
+async streamAttachments<NewBatch>({
+  stream,
+  processors,
+  batchSize,
+}: {
+  stream: ExternalSystemAttachmentStreamingFunction;
+  processors?: ExternalSystemAttachmentProcessors<ConnectorState, NormalizedAttachment[], NewBatch>;
+  batchSize?: number;
+}): Promise<StreamAttachmentsReturnType>
+```

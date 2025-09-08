@@ -1,0 +1,9 @@
+{
+  "title": "Common",
+  "pages": [
+    "constants",
+    "control-protocol",
+    "helpers",
+    "install-initial-domain-mapping"
+  ]
+}

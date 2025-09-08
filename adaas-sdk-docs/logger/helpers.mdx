@@ -1,0 +1,102 @@
+---
+title: 'Logger Helper Functions'
+description: 'Documentation for the helper functions in the Logger module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Logger Helper Functions
+
+This page documents the helper functions used in the `Logger` module.
+
+## Grounding
+
+- **Source File:** `src/logger/logger.ts`
+
+---
+
+## `getPrintableState`
+
+A helper function that recursively processes a state object and returns a summarized, "printable" version of it. This is useful for logging complex objects without generating overly verbose output.
+
+### Signature
+
+```typescript
+export function getPrintableState(state: Record<string, any>): PrintableState
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    state: {
+      type: 'Record<string, any>',
+      description: 'The state object to process.',
+    },
+  }}
+/>
+
+### Returns
+
+A `PrintableState` object, which is a summarized version of the input state.
+
+---
+
+## `serializeError`
+
+A helper function that serializes an error object. It includes special handling for `AxiosError` to extract relevant information.
+
+### Signature
+
+```typescript
+export const serializeError = (error: unknown) => { ... }
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    error: {
+      type: 'unknown',
+      description: 'The error object to serialize.',
+    },
+  }}
+/>
+
+### Returns
+
+A serialized representation of the error. If the error is an `AxiosError`, it returns a summarized object with request and response details. Otherwise, it returns the original error.
+
+---
+
+## `serializeAxiosError`
+
+A helper function that serializes an `AxiosError` object, extracting key information about the request and response.
+
+### Signature
+
+```typescript
+export function serializeAxiosError(error: AxiosError)
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    error: {
+      type: 'AxiosError',
+      description: 'The AxiosError object to serialize.',
+    },
+  }}
+/>
+
+### Returns
+
+An object containing the following properties:
+- `config`: The request configuration.
+- `isAxiosError`: A boolean flag set to `true`.
+- `isCorsOrNoNetworkError`: A boolean flag indicating if the error is due to CORS or a network issue.
+- `response`: A summarized version of the response, including data, headers, status, and status text.

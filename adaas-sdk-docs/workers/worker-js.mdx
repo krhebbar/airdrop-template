@@ -1,0 +1,30 @@
+---
+title: 'Worker Entry Point (worker.js)'
+description: 'Documentation for the internal worker.js file.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+# Worker Entry Point (`worker.js`)
+
+This file is the internal entry point for all worker threads created by the SDK.
+
+<Callout type="warning" title="Internal Use Only">
+  This file is part of the SDK's internal implementation and should not be modified or called directly.
+</Callout>
+
+## Grounding
+
+- **Source File:** `src/workers/worker.js`
+
+---
+
+## Purpose
+
+The `worker.js` file serves as a bridge to allow the SDK to run worker files written in TypeScript. When a new worker thread is created using the `createWorker` function, this `worker.js` file is the script that is actually executed.
+
+It performs two main tasks:
+1.  **Registers `ts-node`:** It programmatically registers `ts-node`, which enables Node.js to execute TypeScript code on the fly without a separate compilation step.
+2.  **Requires the User's Worker File:** It uses the `workerData` object (which is passed when the worker is created) to get the path to the actual TypeScript worker file (`workerData.workerPath`) and then `require`s it, which starts the execution of the user-provided worker logic.

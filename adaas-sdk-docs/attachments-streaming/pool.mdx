@@ -1,0 +1,69 @@
+---
+title: 'Attachments Streaming Pool'
+description: 'Documentation for the AttachmentsStreamingPool class in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# `AttachmentsStreamingPool` Class
+
+The `AttachmentsStreamingPool` class provides a mechanism for streaming multiple attachments concurrently, with a configurable batch size. It is designed to handle large numbers of attachments efficiently.
+
+## Grounding
+
+- **Source File:** `src/attachments-streaming/attachments-streaming-pool.ts`
+
+## Constructor
+
+The constructor initializes a new `AttachmentsStreamingPool` instance.
+
+### Signature
+
+```typescript
+constructor({
+  adapter,
+  attachments,
+  batchSize = 10,
+  stream,
+}: AttachmentsStreamingPoolParams<ConnectorState>)
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    '{...}': {
+      type: 'AttachmentsStreamingPoolParams<ConnectorState>',
+      description: 'The parameters for creating the pool.',
+    },
+  }}
+/>
+
+## Methods
+
+### `streamAll`
+
+Starts the process of streaming all attachments in the pool. It creates a number of concurrent streaming operations up to the configured `batchSize`.
+
+#### Signature
+
+```typescript
+async streamAll(): Promise<ProcessAttachmentReturnType>
+```
+
+#### Returns
+
+A `Promise` that resolves with a `ProcessAttachmentReturnType` object, which may contain a `delay` if rate limiting was encountered.
+
+### `startPoolStreaming`
+
+This is an internal method that processes attachments from the pool one by one. It is called by `streamAll` to create the concurrent streaming operations. It handles skipping already processed attachments and rate limiting.
+
+#### Signature
+
+```typescript
+async startPoolStreaming(): Promise<void>
+```

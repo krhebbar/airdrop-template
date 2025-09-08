@@ -1,0 +1,76 @@
+---
+title: 'Control Protocol'
+description: 'Documentation for the control protocol in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Control Protocol
+
+This page documents the control protocol used for emitting events from the SDK.
+
+## Grounding
+
+- **Source File:** `src/common/control-protocol.ts`
+
+---
+
+## `EmitInterface`
+
+An interface that defines the shape of the object passed to the `emit` function.
+
+<TypeTable
+  type={{
+    event: {
+      type: 'AirdropEvent',
+      description: 'The original Airdrop event that triggered the emission.',
+    },
+    eventType: {
+      type: 'ExtractorEventType | LoaderEventType',
+      description: 'The type of the new event to be emitted.',
+    },
+    data: {
+      type: 'EventData',
+      description: 'Optional data to be included in the new event.',
+      default: 'undefined',
+    },
+  }}
+/>
+
+---
+
+## `emit`
+
+A function that sends a new event to the DevRev platform. It constructs a new event, logs it, and then sends it to the callback URL specified in the original event.
+
+### Signature
+
+```typescript
+export const emit = async ({
+  event,
+  eventType,
+  data,
+}: EmitInterface): Promise<AxiosResponse>
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    '{ event, eventType, data }': {
+      type: 'EmitInterface',
+      description: 'An object conforming to the `EmitInterface`.',
+    },
+  }}
+/>
+
+### Returns
+
+A `Promise` that resolves with an `AxiosResponse` object from the POST request.
+
+### Error Conditions
+
+The `emit` function can throw an `AxiosError` if the HTTP request to the callback URL fails. The error will contain details about the failed request, including the response status and data if available. You can use the `serializeAxiosError` helper from the `logger` module to get a serializable representation of the error.

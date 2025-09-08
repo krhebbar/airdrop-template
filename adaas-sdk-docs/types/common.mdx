@@ -1,0 +1,53 @@
+---
+title: 'Common Types'
+description: 'Documentation for the common types in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Common Types
+
+This page documents the common, general-purpose types used across the SDK.
+
+## Grounding
+
+- **Source File:** `src/types/common.ts`
+
+---
+
+## `ErrorRecord`
+
+An interface that defines the structure of an error record.
+
+<TypeTable
+  type={{
+    message: {
+      type: 'string',
+      description: 'The error message.',
+    },
+  }}
+/>
+
+---
+
+## `InitialDomainMapping`
+
+An interface that defines the structure of the initial domain mapping, which is used to configure the relationships between external systems and DevRev.
+
+<TypeTable
+  type={{
+    starting_recipe_blueprint: {
+      type: 'object',
+      description: 'An object representing the starting recipe blueprint.',
+      default: 'undefined',
+    },
+    additional_mappings: {
+      type: 'object',
+      description: 'An object containing any additional mappings.',
+      default: 'undefined',
+    },
+  }}
+/>

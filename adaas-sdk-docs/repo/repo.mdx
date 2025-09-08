@@ -1,0 +1,117 @@
+---
+title: 'Repo Class'
+description: 'Documentation for the Repo class in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Repo Class
+
+The `Repo` class is responsible for collecting, normalizing, and uploading data in batches. It acts as a temporary store for items before they are sent to the DevRev platform as artifacts.
+
+## Grounding
+
+- **Source File:** `src/repo/repo.ts`
+
+## Constructor
+
+The constructor initializes a new `Repo` instance.
+
+### Signature
+
+```typescript
+constructor({
+  event,
+  itemType,
+  normalize,
+  onUpload,
+  options,
+}: RepoFactoryInterface)
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    '{...}': {
+      type: 'RepoFactoryInterface',
+      description: 'The factory object for creating the repo.',
+    },
+  }}
+/>
+
+## Methods
+
+### `getItems`
+
+Returns the items currently stored in the repository.
+
+#### Signature
+
+```typescript
+getItems(): (NormalizedItem | NormalizedAttachment | Item)[]
+```
+
+#### Returns
+
+An array of items.
+
+---
+
+### `upload`
+
+Uploads a batch of items to the DevRev platform. If no batch is provided, it uploads all items currently in the repository.
+
+#### Signature
+
+```typescript
+async upload(
+  batch?: (NormalizedItem | NormalizedAttachment | Item)[]
+): Promise<void | ErrorRecord>
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    batch: {
+      type: '(NormalizedItem | NormalizedAttachment | Item)[]',
+      description: 'An optional array of items to upload.',
+      default: 'undefined',
+    },
+  }}
+/>
+
+#### Returns
+
+A `Promise` that resolves with an `ErrorRecord` if the upload fails, or `void` if it succeeds.
+
+---
+
+### `push`
+
+Adds an array of items to the repository. If the number of items in the repository reaches the batch size, it triggers an upload.
+
+#### Signature
+
+```typescript
+async push(items: Item[]): Promise<boolean>
+```
+
+#### Parameters
+
+<TypeTable
+  type={{
+    items: {
+      type: 'Item[]',
+      description: 'An array of items to add to the repository.',
+    },
+  }}
+/>
+
+#### Returns
+
+A `Promise` that resolves with `true` if the items were pushed successfully, or `false` if an error occurred during upload.

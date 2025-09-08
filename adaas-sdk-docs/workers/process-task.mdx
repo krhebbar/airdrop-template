@@ -1,0 +1,74 @@
+---
+title: 'Process Task'
+description: 'Documentation for the processTask function in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# `processTask`
+
+This page documents the `processTask` function, which is the main entry point for the code that runs inside a worker thread.
+
+## Grounding
+
+- **Source File:** `src/workers/process-task.ts`
+
+---
+
+## Function: `processTask`
+
+This function should be called inside your worker file. It sets up the necessary context for the worker, including the `WorkerAdapter`, and then executes the task that you provide. It also handles the `onTimeout` logic if the worker receives an exit message from the main thread.
+
+### Signature
+
+```typescript
+export function processTask<ConnectorState>({
+  task,
+  onTimeout,
+}: ProcessTaskInterface<ConnectorState>)
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    '{ task, onTimeout }': {
+      type: 'ProcessTaskInterface<ConnectorState>',
+      description: 'An object containing the `task` and `onTimeout` functions.',
+    },
+  }}
+/>
+
+### `task`
+
+The main function to be executed by the worker. It receives an object containing the `WorkerAdapter` instance.
+
+### `onTimeout`
+
+A function to be executed if the worker receives a timeout signal from the main thread. This function should perform any necessary cleanup before the worker exits.
+
+### Usage Example
+
+```typescript
+// in your-worker.ts
+import { processTask } from '@devrev/adaas-sdk';
+import { WorkerAdapter } from '@devrev/adaas-sdk';
+
+interface MyConnectorState {
+  //...
+}
+
+processTask<MyConnectorState>({
+  task: async ({ adapter }: { adapter: WorkerAdapter<MyConnectorState> }) => {
+    // Your main worker logic here
+    await adapter.emit('EXTRACTION_DATA_PROGRESS', { progress: 100 });
+  },
+  onTimeout: async ({ adapter }: { adapter: WorkerAdapter<MyConnectorState> }) => {
+    // Your timeout cleanup logic here
+    console.log('Worker timed out!');
+  },
+});
+```

@@ -1,0 +1,42 @@
+---
+title: 'Internal Axios Client'
+description: 'Documentation for the internal Axios client in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Internal Axios Client
+
+This page documents the internal Axios client, which is used for communication between different parts of the SDK and the DevRev platform.
+
+<Callout type="warning" title="Internal Use Only">
+  This client is intended for internal use within the SDK. For most use cases, you should use the public `axiosClient` documented in the [Axios Client](./axios-client) page.
+</Callout>
+
+## Grounding
+
+- **Source File:** `src/http/axios-client-internal.ts`
+
+---
+
+## `axiosClient` (internal)
+
+An `axios` instance that is pre-configured with a specific retry mechanism for internal API calls.
+
+### Features
+
+- **Automatic Retries:** The client will automatically retry failed requests up to 5 times.
+- **Custom Retry Delay:**
+    - **For 429 "Too Many Requests" errors:** The client respects the `Retry-After` header returned by the API and waits for the specified duration before retrying.
+    - **For other retryable errors:** An exponential backoff delay is applied.
+- **Retry Conditions:** Retries are triggered for:
+    - 5xx server errors.
+    - 429 "Too Many Requests" errors, but only if a valid `Retry-After` header is present.
+- **Security:** Sensitive headers like `Authorization` are removed from error logs when the maximum number of retries is exceeded.
+
+### Usage
+
+This client is used internally by the SDK for operations like emitting events. It is not recommended for direct use in snap-in code unless you have a specific need for its retry behavior.

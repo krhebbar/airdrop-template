@@ -1,0 +1,233 @@
+---
+title: 'Helper Functions'
+description: 'Documentation for the helper functions in the common module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Helper Functions
+
+This page documents the helper functions available in the `common` module.
+
+## Grounding
+
+- **Source File:** `src/common/helpers.ts`
+
+---
+
+## `getTimeoutErrorEventType`
+
+Returns the appropriate error event type for a given event type when a timeout occurs.
+
+### Signature
+
+```typescript
+export function getTimeoutErrorEventType(eventType: EventType): {
+  eventType: ExtractorEventType | LoaderEventType;
+}
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    eventType: {
+      type: 'EventType',
+      description: 'The event type that timed out.',
+    },
+  }}
+/>
+
+### Returns
+
+An object containing the corresponding error event type.
+
+---
+
+## `getSyncDirection`
+
+Returns the sync direction (`mode`) from an `AirdropEvent`.
+
+### Signature
+
+```typescript
+export function getSyncDirection({ event }: { event: AirdropEvent })
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    event: {
+      type: 'AirdropEvent',
+      description: 'The Airdrop event.',
+    },
+  }}
+/>
+
+### Returns
+
+The sync direction as a string.
+
+---
+
+## `getFilesToLoad`
+
+Filters and sorts a list of stats files based on supported item types to determine which files to load.
+
+### Signature
+
+```typescript
+export function getFilesToLoad({
+  supportedItemTypes,
+  statsFile,
+}: {
+  supportedItemTypes: string[];
+  statsFile: StatsFileObject[];
+}): FileToLoad[]
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    supportedItemTypes: {
+      type: 'string[]',
+      description: 'An array of supported item type strings.',
+    },
+    statsFile: {
+      type: 'StatsFileObject[]',
+      description: 'An array of stats file objects.',
+    },
+  }}
+/>
+
+### Returns
+
+An array of `FileToLoad` objects, sorted according to the order of `supportedItemTypes`.
+
+---
+
+## `addReportToLoaderReport`
+
+Adds a new report to an existing array of loader reports. If a report for the same item type already exists, it updates the existing report.
+
+### Signature
+
+```typescript
+export function addReportToLoaderReport({
+  loaderReports,
+  report,
+}: {
+  loaderReports: LoaderReport[];
+  report: LoaderReport;
+}): LoaderReport[]
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    loaderReports: {
+      type: 'LoaderReport[]',
+      description: 'The array of existing loader reports.',
+    },
+    report: {
+      type: 'LoaderReport',
+      description: 'The new report to add.',
+    },
+  }}
+/>
+
+### Returns
+
+The updated array of `LoaderReport` objects.
+
+---
+
+## `getCircularReplacer`
+
+Returns a replacer function for `JSON.stringify` that handles circular references in objects.
+
+### Signature
+
+```typescript
+export function getCircularReplacer()
+```
+
+### Returns
+
+A replacer function that can be used with `JSON.stringify`.
+
+---
+
+## `getLibraryVersion`
+
+Reads and returns the version of the `adaas` library from `package.json`.
+
+### Signature
+
+```typescript
+export function getLibraryVersion()
+```
+
+### Returns
+
+The library version as a string, or an empty string if the version cannot be read.
+
+---
+
+## `sleep`
+
+Pauses execution for a specified number of milliseconds.
+
+### Signature
+
+```typescript
+export function sleep(ms: number)
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    ms: {
+      type: 'number',
+      description: 'The number of milliseconds to sleep.',
+    },
+  }}
+/>
+
+### Returns
+
+A `Promise` that resolves after the specified delay.
+
+---
+
+## `truncateFilename`
+
+Truncates a filename if it exceeds the maximum allowed length, adding an ellipsis in the middle to preserve the file extension.
+
+### Signature
+
+```typescript
+export function truncateFilename(filename: string): string
+```
+
+### Parameters
+
+<TypeTable
+  type={{
+    filename: {
+      type: 'string',
+      description: 'The filename to truncate.',
+    },
+  }}
+/>
+
+### Returns
+
+The truncated filename.

@@ -1,0 +1,65 @@
+---
+title: 'Axios Client'
+description: 'Documentation for the pre-configured Axios client in the TypeScript SDK.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Axios Client
+
+This page documents the pre-configured Axios client, which is the recommended way to make HTTP requests in the SDK.
+
+## Grounding
+
+- **Source File:** `src/http/axios-client.ts`
+
+---
+
+## `axiosClient`
+
+An `axios` instance that is pre-configured with a robust retry mechanism using `axios-retry`. This client should be used for all external HTTP requests to ensure reliability.
+
+### Features
+
+- **Automatic Retries:** The client will automatically retry failed requests up to 5 times.
+- **Exponential Backoff:** An exponential backoff delay is applied between retries to avoid overwhelming the server.
+- **Retry Conditions:** Retries are triggered for:
+  - Network errors (e.g., no response received).
+  - Idempotent requests (GET, HEAD, OPTIONS, PUT).
+  - All 5xx server errors.
+- **Security:** Sensitive headers like `Authorization` are removed from error logs when the maximum number of retries is exceeded.
+
+### Usage Example
+
+```typescript
+import { axiosClient } from './axios-client';
+
+async function fetchData() {
+  try {
+    const response = await axiosClient.get('https://api.devrev.ai/v1/some-endpoint');
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
+  }
+}
+```
+
+---
+
+## `axios`
+
+The original, unmodified `axios` instance is also exported. This can be used for cases where you need to create a custom Axios instance with different configurations.
+
+### Usage Example
+
+```typescript
+import { axios } from './axios-client';
+
+const customClient = axios.create({
+  baseURL: 'https://api.example.com',
+  timeout: 5000,
+});
+```

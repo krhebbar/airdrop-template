@@ -1,0 +1,45 @@
+---
+title: 'Interfaces'
+description: 'Documentation for interfaces in the Attachments Streaming module.'
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+# Attachments Streaming Interfaces
+
+This page documents the interfaces used in the `Attachments Streaming` module.
+
+## Grounding
+
+- **Source File:** `src/attachments-streaming/attachments-streaming-pool.interfaces.ts`
+
+---
+
+## `AttachmentsStreamingPoolParams<ConnectorState>`
+
+An interface that defines the parameters for creating an `AttachmentsStreamingPool` instance.
+
+<TypeTable
+  type={{
+    adapter: {
+      type: 'WorkerAdapter<ConnectorState>',
+      description: 'The worker adapter instance.',
+    },
+    attachments: {
+      type: 'NormalizedAttachment[]',
+      description: 'An array of attachments to be streamed.',
+    },
+    batchSize: {
+      type: 'number',
+      description: 'The number of attachments to stream concurrently.',
+      default: 'undefined',
+    },
+    stream: {
+      type: 'ExternalSystemAttachmentStreamingFunction',
+      description: 'The function to be used for streaming each attachment.',
+    },
+  }}
+/>
