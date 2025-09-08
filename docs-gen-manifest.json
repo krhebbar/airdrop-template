@@ -1,0 +1,21 @@
+{
+  "plan": [
+    "1. **Initial Deliverables**: Create `docs-gen-manifest.json` (this file) and `content/docs/airdrop/index.mdx` for initial review and direction validation.",
+    "2. **Await Approval**: Pause work until the initial direction is approved by the user.",
+    "3. **Sequential File Generation**: Create the remaining MDX files one by one, in the `content/docs/airdrop/` directory. For each file, I will follow the per-file validation checklist from `AGENTS.md` and then commit it using git.",
+    "4. **Cookbook Implementation**: For the `cookbook/todo-connector.mdx`, I will implement a simple local Todo example. For `cookbook/notion-connector.mdx`, I will research the Notion API at https://developers.notion.com/, implement the example, and cite my sources.",
+    "5. **Final Deliverables**: Once all documentation files are complete, I will generate `docs-health.json`.",
+    "6. **Submission**: I will open a single Pull Request titled 'docs(airdrop): initial airdrop docs + cookbooks' containing all the generated files."
+  ],
+  "files": [
+    "content/docs/airdrop/index.mdx",
+    "content/docs/airdrop/quickstart.mdx",
+    "content/docs/airdrop/your-first-airdrop.mdx",
+    "content/docs/airdrop/concepts.mdx",
+    "content/docs/airdrop/cookbook/todo-connector.mdx",
+    "content/docs/airdrop/cookbook/notion-connector.mdx",
+    "content/docs/airdrop/api-reference.mdx",
+    "content/docs/airdrop/README.md",
+    "docs-health.json"
+  ]
+}

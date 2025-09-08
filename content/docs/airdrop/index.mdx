@@ -1,0 +1,54 @@
+---
+title: Airdrop Template Introduction
+description: An introduction to the Airdrop Template, a solution for migrating data between DevRev and external systems.
+---
+
+## What is Airdrop?
+
+Airdrop is DevRev’s solution for migrating data between DevRev and an external system. It allows our users to import their existing data from an external system, export any changes in DevRev back to the external system, and keep data in sync.
+
+DevRev provides a range of snap-ins available through the DevRev marketplace for integration with various external systems like Jira and Zendesk. These DevRev provided snap-ins are also called *native snap-ins*.
+
+Sometimes, a specific native snap-in may not be available for a given external system. This is why DevRev enables creation of external snap-ins by third-party developers, allowing them to integrate with DevRev’s Airdrop and develop their own Airdrop snap-ins. These community-developed snap-ins can offer the same functionality as native snap-ins.
+
+### High-Level Architecture
+
+The Airdrop system consists of a few key components that work together to ensure smooth data migration and synchronization.
+
+*TODO: Add a Mermaid diagram here to illustrate the architecture.*
+
+## Quick Start
+
+Get started with the Airdrop Template by following these steps.
+
+<Steps>
+
+### Initialize the project
+
+Clone the `airdrop-template` repository and install the dependencies.
+
+```bash
+git clone https://github.com/devrev/airdrop-template.git
+cd airdrop-template/code
+npm install
+```
+
+### Configure the Snap-in
+
+Configuration is managed through a `config.json` file. You will need to provide credentials and specify the data to be synced.
+
+*TODO: Add details on creating and populating config.json. This will likely require referencing a secrets management guide.*
+
+### Run the Airdrop
+
+Execute the main script to start the airdrop process.
+
+```bash
+npm start
+```
+
+### Verify the Sync
+
+Check the output logs and the DevRev UI to verify that the data has been successfully migrated.
+
+</Steps>
