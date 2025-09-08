@@ -1,0 +1,164 @@
+---
+title: "API Reference"
+description: "A reference for the key configurations, interfaces, and functions in the Airdrop Template."
+---
+
+import { File, Files } from 'fumadocs-ui/components/card';
+
+This document provides a reference for the most important code and configuration snippets you will encounter when building an Airdrop snap-in.
+
+## Manifest (`manifest.yaml`)
+
+The `manifest.yaml` file is the primary configuration file for your snap-in. It defines the snap-in's metadata, functions, and connection settings.
+
+### Connection & Authentication (`keyring_types`)
+
+This section defines how your snap-in authenticates with the external system. You can configure it to use an API key, token, or OAuth. The `fields` are presented to the user in the DevRev UI when they set up a connection.
+
+<File>
+  <File.Panel title="manifest.yaml">
+  ```yaml
+  keyring_types:
+    - id: example-pat-connection
+      name: Todo Connection
+      description: Connection details for authenticating with Todo
+      external_system_name: Todo
+      kind: "Secret"
+      is_subdomain: true
+      secret_config:
+        secret_transform: ".token"
+        fields:
+          - id: token
+            name: Token
+            description: Example API token
+        # Airdrop will call this URL to verify the token.
+        token_verification:
+          url: https://api.example.com/v1/me
+          method: GET
+  ```
+  </File.Panel>
+</File>
+
+
+### Import Definition (`imports`)
+
+This section ties everything together, defining the data import flow for your snap-in. It specifies which functions to call for extraction and loading and which connection types are allowed.
+
+<File>
+  <File.Panel title="manifest.yaml">
+  ```yaml
+  imports:
+    - slug: airdrop-todo-snap-in
+      display_name: Todo
+      description: Import data from Todo using Airdrop
+      # These must match the function names defined above
+      extractor_function: extraction
+      loader_function: loading
+      # This must match the id from keyring_types
+      allowed_connection_types:
+        - example-pat-connection
+  ```
+  </File.Panel>
+</File>
+
+---
+
+## Core Functions & Interfaces
+
+These are the key building blocks of the Airdrop logic, found primarily in `code/src/`.
+
+### Entry Point (`code/src/functions/extraction/index.ts`)
+
+This file acts as the router for the extraction process. It receives events from the Airdrop platform and spawns the appropriate worker.
+
+#### `ExtractorState` Interface
+You must define an `ExtractorState` interface to track the progress of your extraction. This state is persisted between function invocations.
+
+```typescript
+export interface ExtractorState {
+  todos: { completed: boolean; page?: number };
+  users: { completed: boolean; page?: number };
+  attachments: { completed: boolean; page?: number };
+}
+```
+
+#### `spawn` Function
+The `spawn` function from `@devrev/ts-adaas` is used to execute a worker for a given phase of the extraction.
+
+```typescript
+import { AirdropEvent, spawn } from '@devrev/ts-adaas';
+
+// ...
+
+const run = async (events: AirdropEvent[]) => {
+  for (const event of events) {
+    const file = getWorkerPerExtractionPhase(event); // Get the path to the worker script
+    await spawn<ExtractorState>({
+      event,
+      initialState: initialExtractorState,
+      workerPath: file,
+      initialDomainMapping,
+    });
+  }
+};
+```
+
+### Worker Logic (`code/src/functions/extraction/workers/*.ts`)
+
+Worker files contain the core logic for each extraction phase. They use the `processTask` function to define their behavior.
+
+#### `processTask` Function
+The `processTask` function from `@devrev/ts-adaas` is the main wrapper for your worker logic. It provides an `adapter` object with methods to interact with the Airdrop platform.
+
+```typescript
+import { ExtractorEventType, processTask } from '@devrev/ts-adaas';
+
+processTask<ExtractorState>({
+  // The main logic for the worker
+  task: async ({ adapter }) => {
+    // ... your extraction logic here ...
+
+    // Example: Pushing data to a repo
+    const items = await fetchItemsFromApi();
+    await adapter.getRepo('todos')?.push(items);
+
+    // Example: Updating state
+    adapter.state.todos.completed = true;
+
+    // Example: Emitting an event to signal completion
+    await adapter.emit(ExtractorEventType.ExtractionDataDone);
+  },
+
+  // A timeout handler
+  onTimeout: async ({ adapter }) => {
+    await adapter.emit(ExtractorEventType.ExtractionDataProgress);
+  },
+});
+```
+
+#### The `adapter` Object
+The `adapter` is your primary tool inside a worker. Here are some of its key methods and properties:
+
+- `adapter.state`: Access and modify the current `ExtractorState` for this run.
+- `adapter.initializeRepos([...])`: Initializes the data repositories for storing extracted items.
+- `adapter.getRepo(name)`: Gets a repository object to which you can `.push()` items.
+- `adapter.emit(eventType)`: Emits an event to the Airdrop platform (e.g., to signal progress or completion).
+- `adapter.event`: The full `AirdropEvent` object that triggered this worker. This contains payload data, including `connection_data`.
+
+### Normalization (`code/src/functions/external-system/data-normalization.ts`)
+
+Normalization functions are responsible for transforming data from the external system's format into a format that DevRev understands. You provide these functions when you initialize a repository.
+
+A normalization function receives a single item from the source data and should return an object with fields that map to DevRev's data model.
+
+```typescript
+export const normalizeTodo = (todo: any) => {
+  return {
+    // DevRev field on the left, source field on the right
+    id: todo.id,
+    title: todo.title,
+    is_completed: todo.completed_status === 'done',
+    // ...
+  };
+};
+```

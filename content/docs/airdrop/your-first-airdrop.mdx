@@ -1,0 +1,97 @@
+---
+title: "Your First Airdrop: A Codelab"
+description: A step-by-step guide to modifying the Airdrop template to perform your first data extraction.
+---
+
+import { Steps } from 'fumadocs-ui/components/steps';
+
+## Introduction
+
+Welcome to your first Airdrop! This codelab will guide you through the process of modifying the Airdrop template to extract custom data. We will focus on the core logic of data extraction, providing a simple, hands-on example to get you started.
+
+By the end of this guide, you will have:
+- Understood the basic structure of an Airdrop snap-in.
+- Modified the template to extract a list of mock "todo" items.
+- Run the snap-in and verified the extracted data in your DevRev organization.
+
+## Prerequisites
+
+Before you begin, please ensure you have completed the **[Quick Start](./quickstart.mdx)** guide. Your local development environment should be set up, and you should have the Airdrop template running and connected to your DevRev organization.
+
+## Understanding the Code
+
+The core logic for the Airdrop template resides in the `code/src/functions/` directory. This is where you'll find the code responsible for extracting data from an external system and loading it into DevRev.
+
+For this codelab, we will be working inside the `code/src/functions/extraction/workers/` directory. This directory contains the "workers" that perform the different phases of data extraction. Our focus will be on `data-extraction.ts`.
+
+## Codelab: Extracting Mock Data
+
+Let's get our hands dirty! We're going to modify `data-extraction.ts` to extract a hardcoded list of todo items. This is a great way to understand the data extraction flow without the complexity of connecting to a live external API.
+
+<Steps>
+
+### 1. Open `data-extraction.ts`
+
+Navigate to `code/src/functions/extraction/workers/data-extraction.ts` in your code editor.
+
+### 2. Define Mock Data
+
+Inside the `task` function, just before the `httpClient` is initialized, let's define an array of mock todo objects.
+
+```typescript
+const mockTodos = [
+  { id: '1', title: 'Complete the Airdrop Codelab', completed: false },
+  { id: '2', title: 'Learn about Fumadocs', completed: true },
+  { id: '3', title: 'Build an awesome snap-in', completed: false },
+];
+```
+
+### 3. Modify the Extraction Logic
+
+Now, let's replace the existing extraction loop with a much simpler one that uses our mock data. Find the `for` loop that iterates over `itemTypesToExtract` and replace it with the following code:
+
+```typescript
+// The original code has been removed for clarity.
+// We will push our mock data directly.
+
+// First, ensure the 'todos' repo is initialized.
+adapter.initializeRepos([{ itemType: 'todos', normalize: normalizeTodo }]);
+
+// Now, push the mock data to the 'todos' repo.
+await adapter.getRepo('todos')?.push(mockTodos);
+adapter.state['todos'].completed = true;
+
+// The rest of the item types are skipped for this example.
+adapter.state['users'].completed = true;
+adapter.state['attachments'].completed = true;
+
+await adapter.emit(ExtractorEventType.ExtractionDataDone);
+```
+*Note: We are also marking the `users` and `attachments` extractions as complete to simplify the codelab.*
+
+### 4. Review `data-normalization.ts` (Optional)
+
+The `normalizeTodo` function is responsible for transforming the data from the external format to the DevRev format. You can inspect this function in `code/src/functions/external-system/data-normalization.ts` to see how it works. For this codelab, the default normalization is sufficient.
+
+</Steps>
+
+## Running the Snap-in
+
+Now that you've modified the code, it's time to see it in action.
+
+1.  **Start the development server** (if it's not already running):
+    ```bash
+    cd code
+    npm run test:server -- local
+    ```
+2.  **Ensure ngrok is running** and your snap-in is installed and activated as per the Quick Start guide.
+3.  **Trigger an Airdrop**: Go to your DevRev organization, navigate to **Airdrops**, and start a new airdrop with your snap-in.
+
+## Verifying in DevRev
+
+Once the airdrop is complete, you can verify that the data has been successfully extracted.
+
+1.  In your DevRev organization, go to the **Works** section.
+2.  You should see new "Ticket" work items corresponding to the mock todos you created. For example, you should find a ticket titled "Complete the Airdrop Codelab".
+
+Congratulations! You have successfully completed your first airdrop, modifying the template to extract custom data and verifying the result in DevRev. You are now ready to explore more advanced topics, such as connecting to live APIs and implementing two-way data sync.

@@ -1,0 +1,148 @@
+---
+title: "Cookbook: Local Todo Connector"
+description: "A complete example of an Airdrop snap-in that syncs with a local JSON file of todo items."
+---
+
+import { Steps, File, Files } from 'fumadocs-ui/components/card';
+
+## Introduction
+
+This cookbook provides a complete, working example of an Airdrop snap-in. It demonstrates how to sync data from a simple, local "external system"—in this case, a JSON file containing a list of todo items.
+
+This approach is perfect for understanding the end-to-end Airdrop workflow without the complexity of dealing with remote APIs, authentication, or rate limits.
+
+## The Goal
+
+Our goal is to build a snap-in that can:
+1.  Read a `todos.json` file from the local file system.
+2.  Extract the todo items from the JSON file.
+3.  Load them into DevRev as "Ticket" work items.
+
+## The Implementation
+
+We will create a `todos.json` file and then modify our `data-extraction.ts` worker to read from it.
+
+<Steps>
+
+### 1. Create the Data Source (`todos.json`)
+
+First, let's create our external data source. In the root of your `code/` directory, create a new file named `todos.json` with the following content. This file will serve as our "database" of todo items.
+
+<File>
+  <File.Panel title="code/todos.json">
+    ```json
+    [
+      {
+        "id": "todo-001",
+        "title": "Set up local Airdrop environment",
+        "is_completed": true,
+        "created_by": "user-01"
+      },
+      {
+        "id": "todo-002",
+        "title": "Implement local JSON file reading",
+        "is_completed": false,
+        "created_by": "user-01"
+      },
+      {
+        "id": "todo-003",
+        "title": "Verify data in DevRev UI",
+        "is_completed": false,
+        "created_by": "user-02"
+      }
+    ]
+    ```
+  </File.Panel>
+</File>
+
+### 2. Modify the Data Extraction Worker
+
+Next, we need to update our data extraction logic to read from this new file. Open `code/src/functions/extraction/workers/data-extraction.ts` and replace its content with the following code.
+
+The new code imports Node.js's built-in `fs` (file system) and `path` modules to read the `todos.json` file.
+
+<File>
+  <File.Panel title="code/src/functions/extraction/workers/data-extraction.ts">
+    ```typescript
+    import { ExtractorEventType, processTask } from '@devrev/ts-adaas';
+    import { normalizeTodo } from '../../external-system/data-normalization';
+    import { ExtractorState } from '../index';
+    import * as fs from 'fs';
+    import * as path from 'path';
+
+    processTask<ExtractorState>({
+      task: async ({ adapter }) => {
+        adapter.initializeRepos([
+          { itemType: 'todos', normalize: normalizeTodo },
+        ]);
+
+        // Path to the todos.json file
+        const todosFilePath = path.join(process.cwd(), 'todos.json');
+
+        try {
+          // Read and parse the JSON file
+          const fileContents = fs.readFileSync(todosFilePath, 'utf8');
+          const todos = JSON.parse(fileContents);
+
+          // Push the extracted todos to the repo
+          await adapter.getRepo('todos')?.push(todos);
+          console.log(`Successfully extracted ${todos.length} todo items.`);
+
+        } catch (error) {
+          console.error('Failed to read or parse todos.json:', error);
+          // Decide how to handle the error, e.g., fail the extraction
+        }
+
+        // Mark all extractions as complete
+        adapter.state.todos.completed = true;
+        adapter.state.users.completed = true;
+        adapter.state.attachments.completed = true;
+
+        await adapter.emit(ExtractorEventType.ExtractionDataDone);
+      },
+      onTimeout: async ({ adapter }) => {
+        await adapter.emit(ExtractorEventType.ExtractionDataProgress);
+      },
+    });
+    ```
+  </File.Panel>
+</File>
+
+### 3. Update the Normalization Logic (If Needed)
+
+Our `todos.json` file uses `is_completed` while the default `normalizeTodo` function might expect a `completed` field. Let's ensure our normalization function handles our specific data shape.
+
+Open `code/src/functions/external-system/data-normalization.ts` and verify or update the `normalizeTodo` function.
+
+<File>
+  <File.Panel title="code/src/functions/external-system/data-normalization.ts">
+  ```typescript
+  // ... other normalization functions
+
+  export const normalizeTodo = (todo: any) => {
+    return {
+      // DevRev field on the left, source field on the right
+      id: todo.id,
+      title: todo.title,
+      is_completed: todo.is_completed, // Ensure this matches your source
+      // TODO: Add mappings for other fields like tags, owner, etc.
+    };
+  };
+
+  // ... other normalization functions
+  ```
+  </File.Panel>
+</File>
+
+</Steps>
+
+## Running the Snap-in
+
+With these changes in place, you can now run your Airdrop snap-in.
+
+1.  **Follow the steps in the [Quick Start guide](./quickstart.mdx)** to run the development server and trigger an airdrop from the DevRev UI.
+2.  The snap-in will execute your modified `data-extraction.ts` script.
+3.  Check the console output from your development server to see the "Successfully extracted..." log message.
+4.  Once the airdrop is complete, navigate to the **Works** section in your DevRev organization to see the imported "Ticket" work items.
+
+This cookbook provides a foundational example of how to connect a custom data source to DevRev using the Airdrop template. You can build on this pattern to connect to any local or remote API.

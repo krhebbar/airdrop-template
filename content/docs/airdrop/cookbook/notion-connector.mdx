@@ -1,0 +1,197 @@
+---
+title: "Cookbook: Notion Connector"
+description: "A complete example of building an Airdrop snap-in that syncs with a Notion database."
+---
+
+import { Steps, File, Files, Callout } from 'fumadocs-ui/components/card';
+
+## Introduction
+
+This cookbook provides a complete, working example of building an Airdrop snap-in that connects to a real, external API: **Notion**.
+
+By following this guide, you will learn how to:
+- Authenticate with the Notion API.
+- Query a Notion database to extract data.
+- Integrate a third-party HTTP client (`axios`) into the Airdrop template.
+- Normalize the data from Notion for use in DevRev.
+
+## Prerequisites
+
+Before you start, you will need:
+- A Notion account.
+- A Notion database that you want to sync. For this example, create a simple "Task Tracker" database with properties like `Name` (Title), `Status` (Select), and `Due Date` (Date).
+- An **internal Notion integration token**.
+- The **ID of your Notion database**.
+
+## The Implementation
+
+We will walk through installing an HTTP client, getting your Notion credentials, and modifying the Airdrop template to query the Notion API.
+
+<Steps>
+
+### 1. Get your Notion Credentials
+
+To connect to your Notion workspace, you need an **integration token** and a **database ID**.
+
+- **Integration Token**:
+  1. Go to [notion.so/my-integrations](https://www.notion.so/my-integrations).
+  2. Click **"+ New integration"**.
+  3. Give it a name (e.g., "DevRev Airdrop") and associate it with your workspace.
+  4. Ensure it's an **Internal Integration**.
+  5. On the next screen, copy your **"Internal Integration Token"**. Treat this like a password!
+
+- **Database ID**:
+  1. Open your Notion database in the browser.
+  2. The URL will look like `https://www.notion.so/YOUR_WORKSPACE/DATABASE_ID?v=...`.
+  3. The `DATABASE_ID` is the long string of characters between your workspace name and the `?`. Copy this ID.
+
+- **Share the Database**:
+  1. In your Notion database, click the **•••** menu in the top right.
+  2. Click **"Add connections"** and select the integration you just created.
+
+### 2. Add an HTTP Client
+
+The Airdrop template doesn't include a real HTTP client by default. Let's add `axios`, a popular choice for making API requests.
+
+In your terminal, navigate to the `code/` directory and run:
+```bash
+npm install axios
+```
+
+### 3. Update the `HttpClient`
+
+Now, let's modify the placeholder `HttpClient` to make real API calls to Notion. Open `code/src/functions/external-system/http-client.ts` and replace its content with the following:
+
+<File>
+  <File.Panel title="code/src/functions/external-system/http-client.ts">
+  ```typescript
+  import { AirdropEvent } from '@devrev/ts-adaas';
+  import axios from 'axios';
+
+  const NOTION_API_BASE_URL = 'https://api.notion.com/v1';
+
+  export class HttpClient {
+    private notionToken: string;
+
+    constructor(event: AirdropEvent) {
+      // The Notion token is passed from the connection data.
+      // We will configure this in the manifest.yaml file later.
+      this.notionToken = event.payload.connection_data.key;
+    }
+
+    async queryNotionDatabase(databaseId: string): Promise<any[]> {
+      try {
+        const response = await axios.post(
+          `${NOTION_API_BASE_URL}/databases/${databaseId}/query`,
+          {}, // Empty body queries for all pages
+          {
+            headers: {
+              'Authorization': `Bearer ${this.notionToken}`,
+              'Notion-Version': '2022-06-28', // Use a valid Notion API version
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        // The results are an array of Page objects
+        return response.data.results;
+      } catch (error) {
+        console.error('Failed to query Notion database:', error);
+        throw error; // Re-throw the error to be handled by the worker
+      }
+    }
+  }
+  ```
+  </File.Panel>
+</File>
+
+### 4. Update the Data Extraction Worker
+
+With our `HttpClient` updated, we can now use it in our `data-extraction.ts` worker. Open `code/src/functions/extraction/workers/data-extraction.ts` and replace its content:
+
+<File>
+  <File.Panel title="code/src/functions/extraction/workers/data-extraction.ts">
+  ```typescript
+  import { ExtractorEventType, processTask } from '@devrev/ts-adaas';
+  import { normalizeNotionPage } from '../../external-system/data-normalization';
+  import { HttpClient } from '../../external-system/http-client';
+  import { ExtractorState } from '../index';
+
+  // TODO: Replace with your actual database ID.
+  // For a real snap-in, you would get this from the user during the setup flow.
+  const NOTION_DATABASE_ID = 'YOUR_DATABASE_ID_HERE';
+
+  processTask<ExtractorState>({
+    task: async ({ adapter }) => {
+      // We only need to initialize a repo for Notion pages
+      adapter.initializeRepos([
+        { itemType: 'notion_pages', normalize: normalizeNotionPage },
+      ]);
+
+      const httpClient = new HttpClient(adapter.event);
+
+      const pages = await httpClient.queryNotionDatabase(NOTION_DATABASE_ID);
+
+      await adapter.getRepo('notion_pages')?.push(pages);
+      console.log(`Successfully extracted ${pages.length} pages from Notion.`);
+
+      // Mark all extractions as complete
+      adapter.state.notion_pages.completed = true;
+
+      await adapter.emit(ExtractorEventType.ExtractionDataDone);
+    },
+  });
+  ```
+  </File.Panel>
+</File>
+
+
+### 5. Add a Normalization Function
+
+The data from Notion comes in a specific format (Page objects). We need to normalize it. Add a new `normalizeNotionPage` function to `code/src/functions/external-system/data-normalization.ts`.
+
+<Callout>
+This is a simplified example. A full implementation would need to handle different property types (text, select, date, etc.) more robustly.
+</Callout>
+
+<File>
+  <File.Panel title="code/src/functions/external-system/data-normalization.ts">
+  ```typescript
+  // ... other normalization functions
+
+  export const normalizeNotionPage = (page: any) => {
+    // Example: Extract the 'Name' property from a Notion page
+    const titleProperty = page.properties.Name?.title[0]?.plain_text || 'Untitled';
+
+    return {
+      id: page.id,
+      title: titleProperty,
+      body: `Notion page content for ${titleProperty}`,
+      created_date: page.created_time,
+      modified_date: page.last_edited_time,
+    };
+  };
+  ```
+  </File.Panel>
+</File>
+
+</Steps>
+
+## Running the Snap-in
+
+1.  **Set your Notion Token**: Because we are not building a full UI for this cookbook, the easiest way to provide the token is to hardcode it in the `http-client.ts` for testing purposes. **This is not recommended for production!**
+    ```typescript
+    // In http-client.ts, for testing only:
+    constructor(event: AirdropEvent) {
+      this.notionToken = 'YOUR_INTERNAL_INTEGRATION_TOKEN';
+    }
+    ```
+2.  **Run the development server** and trigger an airdrop from the DevRev UI as shown in the [Quick Start guide](./quickstart.mdx).
+3.  Check your console for the success message and look for your Notion tasks imported as new "Ticket" work items in DevRev.
+
+---
+
+## Citations and Further Reading
+
+This cookbook was created based on the official Notion API documentation.
+- **Authentication**: [Notion API Authorization Guide](https://developers.notion.com/docs/authorization)
+- **Database Querying**: [Notion API Reference: Query a database](https://developers.notion.com/reference/post-database-query)
